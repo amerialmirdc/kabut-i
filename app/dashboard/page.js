@@ -1,5 +1,6 @@
 'use client'
 import NavBar from "../components/NavBar";
+import { useEffect, useState } from "react"
 
 import {
   Chart as ChartJS,
@@ -24,7 +25,37 @@ ChartJS.register(
   Legend
 );
 
-export default function Dashboard() {
+let Dashboard = () => {
+
+  const [isMobile, setIsMobile] = useState(false)
+
+  let defaultMobileWidth = 450;
+
+  useEffect(()=>{
+
+    if(window.innerWidth <= defaultMobileWidth){
+      setIsMobile(true)
+    }else{
+      setIsMobile(false)
+    }
+
+    let windowListener = window.addEventListener('resize', (e) => {
+      if(window.innerWidth <= defaultMobileWidth){
+        setIsMobile(true)
+      }else{
+        setIsMobile(false)
+      }
+    });
+
+    
+
+    return () => {
+      removeEventListener(windowListener)
+    };
+  
+  }, [])
+
+
   const options = {
     responsive: false,
     elements: {
@@ -89,94 +120,108 @@ export default function Dashboard() {
 
   return (
     <div>
-      <div className="h-screen p-4 pb-16 flex flex-col justify-center">
-        <div className="border-slate-400 border h-1/3 mb-4 rounded p-4 relative">
-          <p className="absolute">Ilocos Sur, San Juan</p>
-          <div className="flex flex-col h-full justify-center">
-            <div className="text-center">
+      
+      
+      {/* for mobile only */}
+      {
+        isMobile && 
+        <div>
+            <div className="h-screen p-4 pb-16 flex flex-col justify-center">
+          <div className="border-slate-400 border h-1/3 mb-4 rounded p-4 relative">
+            <p className="absolute">Ilocos Sur, San Juan</p>
+            <div className="flex flex-col h-full justify-center">
+              <div className="text-center">
+                <div className="flex text-5xl justify-center">
+                  10:30
+                  <p className="text-lg right-1/2 ml-1"> am</p>
+                </div>
+                <p>January 24, 2025</p>
+              </div>
+              <div className="flex justify-center mt-3">
+                <div>
+                  <div className="flex text-5xl justify-center">
+                    32
+                    <p className="text-lg right-1/2 ml-1"> °C</p>
+                  </div>
+                  <p>Temperature</p>
+                </div>
+                <div className="mx-6">
+                  <div className="flex text-5xl justify-center">
+                    77
+                    <p className="text-lg right-1/2 ml-1"> %</p>
+                  </div>
+                  <p>Humidity</p>
+                </div>
+                <div>
+                  <div className="flex text-5xl justify-center">
+                    32
+                    <p className="text-lg right-1/2 ml-1"> °C</p>
+                  </div>
+                  <p>Precipitation</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="border-slate-400 border h-1/3 mb-4 rounded flex relative">
+            <div className="flex flex-col justify-center align-middle w-1/2 text-center">
               <div className="flex text-5xl justify-center">
-                10:30
-                <p className="text-lg right-1/2 ml-1"> am</p>
+                29.3
+                <p className="text-sm right-1/2 ml-1">°C</p>
               </div>
-              <p>January 24, 2025</p>
-            </div>
-            <div className="flex justify-center mt-3">
-              <div>
-                <div className="flex text-5xl justify-center">
-                  32
-                  <p className="text-lg right-1/2 ml-1"> °C</p>
-                </div>
-                <p>Temperature</p>
-              </div>
-              <div className="mx-6">
-                <div className="flex text-5xl justify-center">
-                  77
-                  <p className="text-lg right-1/2 ml-1"> %</p>
-                </div>
-                <p>Humidity</p>
-              </div>
-              <div>
-                <div className="flex text-5xl justify-center">
-                  32
-                  <p className="text-lg right-1/2 ml-1"> °C</p>
-                </div>
-                <p>Precipitation</p>
+              <p>Temperature</p>
+              <div className="flex justify-center mt-2">
+              <Line width={"110%"} height={"45%"} options={options} data={tempData} />
               </div>
             </div>
-          </div>
-        </div>
-        <div className="border-slate-400 border h-1/3 mb-4 rounded flex relative">
-          <div className="flex flex-col justify-center align-middle w-1/2 text-center">
-            <div className="flex text-5xl justify-center">
-              29.3
-              <p className="text-sm right-1/2 ml-1">°C</p>
+            <div className="flex flex-col justify-center align-middle w-1/2 text-center">
+              <div className="flex text-5xl justify-center">
+                88
+                <p className="text-lg right-1/2 ml-1"> %</p>
+              </div>
+              <p>Humidity</p>
+              <div className="flex justify-center mt-2">
+              <Line width={"110%"} height={"45%"} options={options} data={tempData} />
+              </div>
             </div>
-            <p>Temperature</p>
-            <div className="flex justify-center mt-2">
-            <Line width={"110%"} height={"45%"} options={options} data={tempData} />
-            </div>
-          </div>
-          <div className="flex flex-col justify-center align-middle w-1/2 text-center">
-            <div className="flex text-5xl justify-center">
-              88
-              <p className="text-lg right-1/2 ml-1"> %</p>
-            </div>
-            <p>Humidity</p>
-            <div className="flex justify-center mt-2">
-            <Line width={"110%"} height={"45%"} options={options} data={tempData} />
-            </div>
-          </div>
 
-          {/* just a line in the middle */}
-          <div className="border-slate-400 border-r h-full ml-5 absolute right-1/2"></div>
-        </div>
-        <div className="border-slate-400 border h-1/3 mb-4 rounded flex relative">
-          <div className="flex flex-col justify-center align-middle w-1/2 text-center">
-            <div className="flex text-5xl justify-center">
-              245
-              <p className="text-sm right-1/2 ml-1">cd</p>
-            </div>
-            <p>Light Intensity</p>
-            <div className="flex justify-center mt-2">
-            <Line width={"110%"} height={"45%"} options={options} data={tempData} />
-            </div>
+            {/* just a line in the middle */}
+            <div className="border-slate-400 border-r h-full ml-5 absolute right-1/2"></div>
           </div>
-          <div className="flex flex-col justify-center align-middle w-1/2 text-center">
-            <div className="flex text-4xl justify-center">
-              1242
-              <p className="text-sm right-1/2 ml-1"> ppm</p>
+          <div className="border-slate-400 border h-1/3 mb-4 rounded flex relative">
+            <div className="flex flex-col justify-center align-middle w-1/2 text-center">
+              <div className="flex text-5xl justify-center">
+                245
+                <p className="text-sm right-1/2 ml-1">cd</p>
+              </div>
+              <p>Light Intensity</p>
+              <div className="flex justify-center mt-2">
+              <Line width={"110%"} height={"45%"} options={options} data={tempData} />
+              </div>
             </div>
-            <p>CO2 Level</p>
-            <div className="flex justify-center mt-2">
-            <Line width={"110%"} height={"45%"} options={options} data={humidityData} />
+            <div className="flex flex-col justify-center align-middle w-1/2 text-center">
+              <div className="flex text-4xl justify-center">
+                1242
+                <p className="text-sm right-1/2 ml-1"> ppm</p>
+              </div>
+              <p>CO2 Level</p>
+              <div className="flex justify-center mt-2">
+              <Line width={"110%"} height={"45%"} options={options} data={humidityData} />
+              </div>
             </div>
-          </div>
 
-          {/* just a line in the middle */}
-          <div className="border-slate-400 border-r h-full ml-5 absolute right-1/2"></div>
+            {/* just a line in the middle */}
+            <div className="border-slate-400 border-r h-full ml-5 absolute right-1/2"></div>
+          </div>
         </div>
-      </div>
-      <NavBar />
+        <NavBar />
+
+        </div>
+      }
+
+      
     </div>
   );
 }
+
+
+export default Dashboard

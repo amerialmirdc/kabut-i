@@ -89,15 +89,47 @@ export default function Dashboard() {
 
   return (
     <div>
-      <div className="h-screen p-6 pb-16 flex flex-col justify-center">
-        <div className="border-slate-400 border h-1/3 mb-6 rounded">
-        
+      <div className="h-screen p-4 pb-16 flex flex-col justify-center">
+        <div className="border-slate-400 border h-1/3 mb-4 rounded p-4 relative">
+          <p className="absolute">Ilocos Sur, San Juan</p>
+          <div className="flex flex-col h-full justify-center">
+            <div className="text-center">
+              <div className="flex text-5xl justify-center">
+                10:30
+                <p className="text-lg right-1/2 ml-1"> am</p>
+              </div>
+              <p>January 24, 2025</p>
+            </div>
+            <div className="flex justify-center mt-3">
+              <div>
+                <div className="flex text-5xl justify-center">
+                  32
+                  <p className="text-lg right-1/2 ml-1"> °C</p>
+                </div>
+                <p>Temperature</p>
+              </div>
+              <div className="mx-6">
+                <div className="flex text-5xl justify-center">
+                  77
+                  <p className="text-lg right-1/2 ml-1"> %</p>
+                </div>
+                <p>Humidity</p>
+              </div>
+              <div>
+                <div className="flex text-5xl justify-center">
+                  32
+                  <p className="text-lg right-1/2 ml-1"> °C</p>
+                </div>
+                <p>Precipitation</p>
+              </div>
+            </div>
+          </div>
         </div>
-        <div className="border-slate-400 border h-1/3 mb-6 rounded flex relative">
+        <div className="border-slate-400 border h-1/3 mb-4 rounded flex relative">
           <div className="flex flex-col justify-center align-middle w-1/2 text-center">
-            <div className="flex text-5xl justify-center relative">
+            <div className="flex text-5xl justify-center">
               29.3
-              <p className="top-0 text-sm absolute right-1/2">°C</p>
+              <p className="text-sm right-1/2 ml-1">°C</p>
             </div>
             <p>Temperature</p>
             <div className="flex justify-center mt-2">
@@ -105,9 +137,9 @@ export default function Dashboard() {
             </div>
           </div>
           <div className="flex flex-col justify-center align-middle w-1/2 text-center">
-            <div className="flex text-5xl justify-center relative">
+            <div className="flex text-5xl justify-center">
               88
-              <p className="top-0 text-sm absolute right-1/2">%</p>
+              <p className="text-lg right-1/2 ml-1"> %</p>
             </div>
             <p>Humidity</p>
             <div className="flex justify-center mt-2">
@@ -118,11 +150,11 @@ export default function Dashboard() {
           {/* just a line in the middle */}
           <div className="border-slate-400 border-r h-full ml-5 absolute right-1/2"></div>
         </div>
-        <div className="border-slate-400 border h-1/3 mb-6 rounded flex relative">
+        <div className="border-slate-400 border h-1/3 mb-4 rounded flex relative">
           <div className="flex flex-col justify-center align-middle w-1/2 text-center">
-            <div className="flex text-5xl justify-center relative">
+            <div className="flex text-5xl justify-center">
               245
-              <p className="top-0 text-sm absolute right-1/2">cd</p>
+              <p className="text-sm right-1/2 ml-1">cd</p>
             </div>
             <p>Light Intensity</p>
             <div className="flex justify-center mt-2">
@@ -130,9 +162,9 @@ export default function Dashboard() {
             </div>
           </div>
           <div className="flex flex-col justify-center align-middle w-1/2 text-center">
-            <div className="flex text-4xl justify-center relative">
+            <div className="flex text-4xl justify-center">
               1242
-              <p className="top-0 text-sm absolute right-1/2">ppm</p>
+              <p className="text-sm right-1/2 ml-1"> ppm</p>
             </div>
             <p>CO2 Level</p>
             <div className="flex justify-center mt-2">

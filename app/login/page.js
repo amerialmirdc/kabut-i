@@ -1,5 +1,25 @@
+'use client'
+import { useEffect, useState } from "react"
+import { useRouter } from 'next/navigation'
+import axios from 'axios'
+import useLocalStorage from '@/app/hooks/useLocalstorage'
 
 export default function Login() {
+  const [email, setEmail] = useState('admin@kabuti.mirdc');
+  const [password, setPassword] = useState('P@ssw0rd123');
+
+  const [token, setToken] = useLocalStorage("token", "")
+  // const [token, setToken] = useState(value)
+
+  const router = useRouter()
+
+  useEffect(()=>{
+    if(token.length > 1){
+      router.push('/dashboard')
+    }
+  }, [])
+
+
   const loginCard = {
     border: 'solid 1px #6C656544',
     height: '600px',
@@ -61,17 +81,37 @@ export default function Login() {
     marginTop: '12px'
   }
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log('submit!')
+    console.log('email', email)
+    console.log('password', password)
+
+    axios.post(`https://i-pond-backend.ap.ngrok.io/api/auth/local`, {identifier: email, password: password}).then(res => {
+      console.log('response', res)
+      if(res.data?.jwt){
+        setToken(res.data?.jwt)
+        router.push('/dashboard')
+      }
+    }).catch(err => {
+      console.log('error', err)
+    })
+  }
+
+
   return (
     <div style={{display: 'flex', justifyContent: 'center', height: '100vh', alignItems: 'center'}}>
-      <div style={loginCard}>
+      <form onSubmit={handleSubmit} style={loginCard}>
         <p style={title}>Kabut-i</p>
         <p style={subtitle}>An Intelligent Mushroom House with Environmental Control and Monitoring System for Ganoderma</p>
-        <label style={label}>email</label>
-        <input type="email" style={textField}/>
-        <label style={label}>password</label>
-        <input type="password" style={textField}/>
-        <button style={button}>Login</button>
-      </div>
+        
+          <label style={label}>email</label>
+          <input type="email" style={textField} value={email} onChange={e=>setEmail(e.target.value)}/>
+          <label style={label}>password</label>
+          <input type="password" style={textField} autoFocus value={password} onChange={e=>setPassword(e.target.value)}/>
+          <button style={button} type="submit">Login</button>
+      </form>
     </div>
   );
+  
 }

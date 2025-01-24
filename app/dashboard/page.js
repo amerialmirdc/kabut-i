@@ -50,7 +50,7 @@ let Dashboard = () => {
     
 
     return () => {
-      removeEventListener(windowListener)
+      removeEventListener('resize', windowListener)
     };
   
   }, [])
@@ -217,6 +217,8 @@ let Dashboard = () => {
 
         </div>
       }
+
+      <NavBar />
 
       
     </div>

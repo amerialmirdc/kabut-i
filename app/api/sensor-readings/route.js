@@ -32,33 +32,20 @@ export const POST = async (request) => {
             }
         }
         
-        const fog_light_intensity = body.fog_light_intensity
-        const fog_co2 = body.fog_co2
-        const fog_humidity = body.fog_humidity
-        const fog_temperature = body.fog_temperature
-        const spr_light_intensity = body.spr_light_intensity
-        const spr_co2 = body.spr_co2
-        const spr_humidity = body.spr_humidity
-        const spr_temperature = body.spr_temperature
-
-        const data = {
-            fog_light_intensity: fog_light_intensity,
-            fog_co2: fog_co2,
-            fog_humidity: fog_humidity,
-            fog_temperature: fog_temperature,
-            spr_light_intensity: spr_light_intensity,
-            spr_co2: spr_co2,
-            spr_humidity: spr_humidity,
-            spr_temperature: spr_temperature
-        }
+        const fog_light_intensity = body.data.fog_light_intensity
+        const fog_co2 = body.data.fog_co2
+        const fog_humidity = body.data.fog_humidity
+        const fog_temperature = body.data.fog_temperature
+        const spr_light_intensity = body.data.spr_light_intensity
+        const spr_co2 = body.data.spr_co2
+        const spr_humidity = body.data.spr_humidity
+        const spr_temperature = body.data.spr_temperature
 
         let error_ = "";
         let response_ = "";
 
-        console.log('body', data)
-
         // send data to amerial server
-        await axios.post('https://i-pond-backend.ap.ngrok.io/api/kabuti-readings', {data:data}, config)
+        await axios.post('https://i-pond-backend.ap.ngrok.io/api/kabuti-readings', body, config)
             .then(async response => {
               // send to mongodb
                 await connect();

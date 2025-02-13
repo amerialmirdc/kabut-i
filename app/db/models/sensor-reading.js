@@ -2,23 +2,35 @@ import {Schema, model, models} from "mongoose";
 
 const SensorReadingSchema = new Schema(
     {
-        tent_number: {
+        fog_light_intensity: {
             type: Number,
             require: true
         },
-        lightIntensity: {
+        fog_co2: {
             type: Number,
             require: true
         },
-        CO2_level: {
+        fog_humidity: {
             type: Number,
             require: true
         },
-        humidity: {
+        fog_temperature: {
             type: Number,
             require: true
         },
-        temperature: {
+        spr_light_intensity: {
+            type: Number,
+            require: true
+        },
+        spr_co2: {
+            type: Number,
+            require: true
+        },
+        spr_humidity: {
+            type: Number,
+            require: true
+        },
+        spr_temperature: {
             type: Number,
             require: true
         },

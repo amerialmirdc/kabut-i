@@ -1,5 +1,5 @@
 'use client'
-import NavBar from "../components/NavBar";
+import NavBar from "../../components/NavBar";
 import { useEffect, useState } from "react"
 import DownloadIcon from '@mui/icons-material/Download';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
@@ -10,7 +10,6 @@ import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import PaginatedItems from "../components/paginated-items";
 
 import {
   Chart as ChartJS,
@@ -40,7 +39,6 @@ let Dashboard = () => {
   const [isMobile, setIsMobile] = useState(false)
 
   let defaultMobileWidth = 450;
-
 
   useEffect(()=>{
 
@@ -301,7 +299,7 @@ let Dashboard = () => {
             </div>
             <div style={{height: 'calc(6% + 1rem)', paddingTop: '1rem'}} className="">
               <div className="border-slate-400 border rounded h-full" >
-                <PaginatedItems itemsPerPage={4} />
+                
               </div>
             </div>
           </div>

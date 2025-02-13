@@ -1,6 +1,9 @@
 import connect from '@/app/db/db'
 import SensorReading from '@/app/db/models/sensor-reading';
 import { NextResponse } from "next/server"
+import { headers } from 'next/headers'
+import axios from 'axios'
+
 
 export const GET = async () => {
     try{
@@ -9,48 +12,89 @@ export const GET = async () => {
         // blocked by mirdc network
         await connect();
         const sensorReading = await SensorReading.find();
-        return new NextResponse(JSON.stringify(sensorReading), {status: 200});
+        return new NextResponse(`${JSON.stringify(sensorReading)} here`, {status: 200});
     } catch (error) {
         return new NextResponse("Error in fetching Sensor Readings, " + error.message, {status: 500});
     }
 }
 
-// export const POST = async (request) => {
-//     try{
-//         const body = await request.json();
-//         console.log("body", body)
-//         await connect();
+export const POST = async (request) => {
+    
+    try{
+        const headersList = await headers()
+        const body = await request.json();
+        // console.log("body", body)
+        // console.log('token', request.headers['authorization'])
 
-//         // checks if the attendee already attend today
-//         // let today = new Date();
-//         // let date_today = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`
-
-//         // const alreadyAttended = await Attendance.findOne({attendee: body.attendee, date_attended: date_today}).populate("attendee");
-//         const alreadyAttended = await Attendance.findOne({
-//             attendee: body.attendee, 
-//             date_attended: body.date_today,
-//             service_number: body.service_number
-//         }).populate("attendee");
-//         //
-//         if(alreadyAttended){
-//             return new NextResponse(JSON.stringify({message: 'Attendance is already recorded for today!', alreadyAttended}),
-//                 {status: 200}
-//             );
-//         }else{
-//             const newAttendance = new Attendance({
-//                 attendee: body.attendee,
-//                 date_attended: body.date_today,
-//                 service_number: body.service_number
-//             });
-//             await newAttendance.save()
-
-//             return new NextResponse(JSON.stringify({message: 'Attendance is created', attendance: newAttendance}),
-//                 {status: 200}
-//             );
-//         }
+        const config = {
+            headers: {
+                "Authorization": headersList.get('authorization')
+            }
+        }
         
+        const fog_light_intensity = body.fog_light_intensity
+        const fog_co2 = body.fog_co2
+        const fog_humidity = body.fog_humidity
+        const fog_temperature = body.fog_temperature
+        const spr_light_intensity = body.spr_light_intensity
+        const spr_co2 = body.spr_co2
+        const spr_humidity = body.spr_humidity
+        const spr_temperature = body.spr_temperature
 
-//     }catch (error) {
-//         return new NextResponse("Error in creating a attendance " + error.message, {status: 500});
-//     }
-// }
+        const data = {
+            fog_light_intensity: fog_light_intensity,
+            fog_co2: fog_co2,
+            fog_humidity: fog_humidity,
+            fog_temperature: fog_temperature,
+            spr_light_intensity: spr_light_intensity,
+            spr_co2: spr_co2,
+            spr_humidity: spr_humidity,
+            spr_temperature: spr_temperature
+        }
+
+        let error_ = "";
+        let response_ = "";
+
+        console.log('body', data)
+
+        // send data to amerial server
+        await axios.post('https://i-pond-backend.ap.ngrok.io/api/kabuti-readings', {data:data}, config)
+            .then(async response => {
+              // send to mongodb
+                await connect();
+                const newReadings = new SensorReading({
+                    fog_light_intensity: fog_light_intensity,
+                    fog_co2: fog_co2,
+                    fog_humidity: fog_humidity,
+                    fog_temperature: fog_temperature,
+                    spr_light_intensity: spr_light_intensity,
+                    spr_co2: spr_co2,
+                    spr_humidity: spr_humidity,
+                    spr_temperature: spr_temperature
+                });
+                await newReadings.save()
+                // end
+
+                response_ = response
+                console.log('success')
+            }).catch(err => {
+                error_ = err;
+                console.log('error')
+            })
+        //end
+
+        if(error_){
+            console.log(error_)
+            return new NextResponse(JSON.stringify({message: 'Error in sending data to amerial server', error: error_}),
+                {status: 500}
+            );
+        }else{
+            return new NextResponse(JSON.stringify({message: 'sent data to amerial server', data: response_.data }),
+                {status: 200}
+            );
+        }
+        
+    }catch (error) {
+        return new NextResponse("Error in inserting sensor readings " + error.message, {status: 500});
+    }
+}

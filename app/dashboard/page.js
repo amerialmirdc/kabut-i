@@ -11,6 +11,9 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import PaginatedItems from "../components/paginated-items";
+import axios from 'axios'
+import moment from 'moment'
+import Image from 'next/image'
 
 import {
   Chart as ChartJS,
@@ -38,27 +41,72 @@ ChartJS.register(
 let Dashboard = () => {
 
   const [isMobile, setIsMobile] = useState(false)
+  const [weather, setWeather] = useState({})
 
   let defaultMobileWidth = 450;
 
+  const url = `http://api.weatherapi.com/v1/current.json?key=44b78a570b194d2c9fb21417251402&q=17.7360796,120.4670137`;
+
+  const fetchWeather = async () => {
+    await axios.get(url).then(res=>{
+      console.log(res)
+      setWeather({
+        condition: res.data?.current.condition,
+        temp_in_c: res.data?.current.temp_c,
+        precip: res.data?.current.precip_mm,
+        humidity: res.data?.current.humidity,
+        date_time: res.data?.location.localtime
+      })
+
+      localStorage.setItem('weather', JSON.stringify({
+        condition: res.data?.current.condition,
+        temp_in_c: res.data?.current.temp_c,
+        precip: res.data?.current.precip_mm,
+        humidity: res.data?.current.humidity,
+        date_time: res.data?.location.localtime
+      }))
+      
+    }).catch(err=>{
+      console.log(err)
+
+      setWeather(JSON.parse(localStorage.getItem('weather')))
+    })
+  }
 
   useEffect(()=>{
+    // console.log(moment().hours() - moment(JSON.parse(localStorage.getItem('weather'))?.date_time).hours())
+    if(localStorage.getItem('weather')){
+      if(moment().hours() - moment(JSON.parse(localStorage.getItem('weather'))?.date_time).hours() > 0){
+        fetchWeather();
+      }else{
+        setWeather({
+          condition: JSON.parse(localStorage.getItem('weather'))?.condition,
+          temp_in_c: JSON.parse(localStorage.getItem('weather'))?.temp_in_c,
+          precip: JSON.parse(localStorage.getItem('weather'))?.precip,
+          humidity: JSON.parse(localStorage.getItem('weather'))?.humidity,
+          date_time: JSON.parse(localStorage.getItem('weather'))?.date_time
+        })
+        console.log('conditio from localstorage', JSON.parse(localStorage.getItem('weather'))?.condition)
+      }
+    }else{
+      fetchWeather();
+    }
 
-    if(window.innerWidth <= defaultMobileWidth){
+    console.log(window.screen.width)
+    if(window.screen.width <= defaultMobileWidth){
       setIsMobile(true)
     }else{
       setIsMobile(false)
     }
 
     let windowListener = window.addEventListener('resize', (e) => {
-      if(window.innerWidth <= defaultMobileWidth){
+      if(window.screen.width <= defaultMobileWidth){
         setIsMobile(true)
       }else{
         setIsMobile(false)
       }
+      console.log(window.screen.width)
     });
-
-    
 
     return () => {
       removeEventListener('resize', windowListener)
@@ -318,30 +366,30 @@ let Dashboard = () => {
               <div className="flex flex-col h-full justify-center">
                 <div className="text-center">
                   <div className="flex text-5xl justify-center">
-                    10:30
+                    {moment(weather.date_time).format('LT')}
                     <p className="text-lg right-1/2 ml-1"> am</p>
                   </div>
-                  <p>January 24, 2025</p>
+                  <p>{moment(weather.date_time).format('ll')}</p>
                 </div>
                 <div className="flex justify-center mt-3">
                   <div>
                     <div className="flex text-5xl justify-center">
-                      32
+                      {weather?.temp_in_c}
                       <p className="text-lg right-1/2 ml-1"> °C</p>
                     </div>
-                    <p>Temperature</p>
+                    <p>{weather?.condition?.text}</p>
                   </div>
                   <div className="mx-6">
                     <div className="flex text-5xl justify-center">
-                      77
+                      {weather.humidity}
                       <p className="text-lg right-1/2 ml-1"> %</p>
                     </div>
                     <p>Humidity</p>
                   </div>
                   <div>
                     <div className="flex text-5xl justify-center">
-                      32
-                      <p className="text-lg right-1/2 ml-1"> °C</p>
+                      {weather.precip}
+                      <p className="text-lg right-1/2 ml-1"> mm</p>
                     </div>
                     <p>Precipitation</p>
                   </div>

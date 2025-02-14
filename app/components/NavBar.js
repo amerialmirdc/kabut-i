@@ -9,14 +9,14 @@ export default function NavBar() {
 
   useEffect(() => {
 
-    if(window.innerWidth <= defaultMobileWidth){
+    if(window.screen.width <= defaultMobileWidth){
       setIsMobile(true)
     }else{
       setIsMobile(false)
     }
 
     let windowListener = window.addEventListener('resize', (e) => {
-      if(window.innerWidth <= defaultMobileWidth){
+      if(window.screen.width <= defaultMobileWidth){
         setIsMobile(true)
       }else{
         setIsMobile(false)

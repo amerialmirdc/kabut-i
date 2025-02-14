@@ -43,6 +43,7 @@ export const POST = async (request) => {
 
         let error_ = "";
         let response_ = "";
+        console.log('body', body)
 
         // send data to amerial server
         await axios.post('https://i-pond-backend.ap.ngrok.io/api/kabuti-readings', body, config)

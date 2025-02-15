@@ -1,5 +1,5 @@
 'use client'
-import NavBar from "../../components/NavBar";
+import NavBar from "@/app/components/NavBar";
 import { useEffect, useState } from "react"
 import DownloadIcon from '@mui/icons-material/Download';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
@@ -10,6 +10,10 @@ import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import PaginatedItems from "@/app/components/paginated-items";
+import axios from 'axios'
+import moment from 'moment'
+import {getCurrentReadings, getDashboardChartData} from '@/app/composables/fetchSensorReadings'
 
 import {
   Chart as ChartJS,
@@ -37,26 +41,189 @@ ChartJS.register(
 let Dashboard = () => {
 
   const [isMobile, setIsMobile] = useState(false)
+  const [weather, setWeather] = useState({})
+  const [sensorReadings, setSensorReadings] = useState([])
+  const [chartFogTemp, setChartFogTemp] = useState({
+    labels: ['1','1','1','1','1'],
+    datasets: [
+      {
+        label: 'Dataset 1',
+        data: [1,1,1,1,1],
+        borderColor: '#49ABDF',
+        lineTension: 0.4
+      }
+    ],
+  })
+  const [chartFogHumidity, setChartFogHumidity] = useState({
+    labels: ['1','1','1','1','1'],
+    datasets: [
+      {
+        label: 'Dataset 1',
+        data: [1,1,1,1,1],
+        borderColor: '#49ABDF',
+        lineTension: 0.4
+      }
+    ],
+  })
+  const [chartFogLightIntensity, setChartFogLightIntensity] = useState({
+    labels: ['1','1','1','1','1'],
+    datasets: [
+      {
+        label: 'Dataset 1',
+        data: [1,1,1,1,1],
+        borderColor: '#49ABDF',
+        lineTension: 0.4
+      }
+    ],
+  })
+  const [chartFogCO2Level, setChartFogCO2Level] = useState({
+    labels: ['1','1','1','1','1'],
+    datasets: [
+      {
+        label: 'Dataset 1',
+        data: [1,1,1,1,1],
+        borderColor: '#49ABDF',
+        lineTension: 0.4
+      }
+    ],
+  })
+
 
   let defaultMobileWidth = 450;
 
-  useEffect(()=>{
+  const weather_url = `http://api.weatherapi.com/v1/current.json?key=44b78a570b194d2c9fb21417251402&q=17.7360796,120.4670137`;
 
-    if(window.innerWidth <= defaultMobileWidth){
+  const fetchWeather = async () => {
+    await axios.get(weather_url).then(res=>{
+      console.log(res)
+      setWeather({
+        condition: res.data?.current.condition,
+        temp_in_c: res.data?.current.temp_c,
+        precip: res.data?.current.precip_mm,
+        humidity: res.data?.current.humidity,
+        date_time: res.data?.location.localtime
+      })
+
+      localStorage.setItem('weather', JSON.stringify({
+        condition: res.data?.current.condition,
+        temp_in_c: res.data?.current.temp_c,
+        precip: res.data?.current.precip_mm,
+        humidity: res.data?.current.humidity,
+        date_time: res.data?.location.localtime
+      }))
+      
+    }).catch(err=>{
+      console.log(err)
+
+      setWeather(JSON.parse(localStorage.getItem('weather')))
+    })
+  }
+
+  const fetchSensorReadings = async () => {
+    const readings = await getCurrentReadings()
+    console.log('readings', readings)
+    setSensorReadings(readings[0])
+  }
+
+  const fetchChartReadings = async () => {
+    let formattedFogTemp = [];
+    let formattedFogHumidity = [];
+    let formattedFogLightIntensity = [];
+    let formattedFogCO2Level = [];
+
+    const data = await getDashboardChartData()
+    console.log('chart data', data)
+    data.forEach(i=>{
+      formattedFogTemp.push(i?.attributes.fog_temperature)
+      formattedFogHumidity.push(i?.attributes.fog_humidity)
+      formattedFogLightIntensity.push(i?.attributes.fog_light_intensity)
+      formattedFogCO2Level.push(i?.attributes.fog_co2)
+    })
+    setChartFogTemp({
+      labels,
+      datasets: [
+        {
+          label: 'Dataset 1',
+          data: formattedFogTemp,
+          borderColor: '#49ABDF',
+          lineTension: 0.4
+        }
+      ],
+    })
+    setChartFogHumidity({
+      labels,
+      datasets: [
+        {
+          label: 'Dataset 1',
+          data: formattedFogHumidity,
+          borderColor: '#49ABDF',
+          lineTension: 0.4
+        }
+      ],
+    })
+    setChartFogLightIntensity({
+      labels,
+      datasets: [
+        {
+          label: 'Dataset 1',
+          data: formattedFogLightIntensity,
+          borderColor: '#49ABDF',
+          lineTension: 0.4
+        }
+      ],
+    })
+    setChartFogCO2Level({
+      labels,
+      datasets: [
+        {
+          label: 'Dataset 1',
+          data: formattedFogCO2Level,
+          borderColor: '#49ABDF',
+          lineTension: 0.4
+        }
+      ],
+    })
+  }
+  
+
+  useEffect( ()=>{
+    fetchSensorReadings()
+    fetchChartReadings()
+    // console.log(getCurrentReadings())
+    // console.log(token)
+    // console.log(moment().hours() - moment(JSON.parse(localStorage.getItem('weather'))?.date_time).hours())
+    if(localStorage.getItem('weather')){
+      if(moment().hours() != moment(JSON.parse(localStorage.getItem('weather'))?.date_time).hours()){
+        fetchWeather();
+      }else{
+        setWeather({
+          condition: JSON.parse(localStorage.getItem('weather'))?.condition,
+          temp_in_c: JSON.parse(localStorage.getItem('weather'))?.temp_in_c,
+          precip: JSON.parse(localStorage.getItem('weather'))?.precip,
+          humidity: JSON.parse(localStorage.getItem('weather'))?.humidity,
+          date_time: JSON.parse(localStorage.getItem('weather'))?.date_time
+        })
+        console.log('conditio from localstorage', JSON.parse(localStorage.getItem('weather'))?.condition)
+      }
+    }else{
+      fetchWeather();
+    }
+
+    console.log(window.screen.width)
+    if(window.screen.width <= defaultMobileWidth){
       setIsMobile(true)
     }else{
       setIsMobile(false)
     }
 
     let windowListener = window.addEventListener('resize', (e) => {
-      if(window.innerWidth <= defaultMobileWidth){
+      if(window.screen.width <= defaultMobileWidth){
         setIsMobile(true)
       }else{
         setIsMobile(false)
       }
+      console.log(window.screen.width)
     });
-
-    
 
     return () => {
       removeEventListener('resize', windowListener)
@@ -299,7 +466,7 @@ let Dashboard = () => {
             </div>
             <div style={{height: 'calc(6% + 1rem)', paddingTop: '1rem'}} className="">
               <div className="border-slate-400 border rounded h-full" >
-                
+                <PaginatedItems itemsPerPage={4} />
               </div>
             </div>
           </div>
@@ -316,30 +483,29 @@ let Dashboard = () => {
               <div className="flex flex-col h-full justify-center">
                 <div className="text-center">
                   <div className="flex text-5xl justify-center">
-                    10:30
-                    <p className="text-lg right-1/2 ml-1"> am</p>
+                    {moment(weather.date_time).format('LT')}
                   </div>
-                  <p>January 24, 2025</p>
+                  <p>{moment(weather.date_time).format('ll')}</p>
                 </div>
                 <div className="flex justify-center mt-3">
                   <div>
                     <div className="flex text-5xl justify-center">
-                      32
+                      {weather?.temp_in_c}
                       <p className="text-lg right-1/2 ml-1"> °C</p>
                     </div>
-                    <p>Temperature</p>
+                    <p>{weather?.condition?.text}</p>
                   </div>
                   <div className="mx-6">
                     <div className="flex text-5xl justify-center">
-                      77
+                      {weather.humidity}
                       <p className="text-lg right-1/2 ml-1"> %</p>
                     </div>
                     <p>Humidity</p>
                   </div>
                   <div>
                     <div className="flex text-5xl justify-center">
-                      32
-                      <p className="text-lg right-1/2 ml-1"> °C</p>
+                      {weather.precip}
+                      <p className="text-lg right-1/2 ml-1"> mm</p>
                     </div>
                     <p>Precipitation</p>
                   </div>
@@ -349,22 +515,22 @@ let Dashboard = () => {
             <div className="border-slate-400 border h-1/3 mb-4 rounded flex relative">
               <div className="flex flex-col justify-center align-middle w-1/2 text-center">
                 <div className="flex text-5xl justify-center">
-                  29.3
+                  {sensorReadings?.attributes?.fog_temperature}
                   <p className="text-sm right-1/2 ml-1">°C</p>
                 </div>
                 <p>Temperature</p>
                 <div className="flex justify-center mt-2">
-                <Line width={"110%"} height={"45%"} options={options} data={tempData} />
+                <Line width={"110%"} height={"45%"} options={options} data={chartFogTemp} />
                 </div>
               </div>
               <div className="flex flex-col justify-center align-middle w-1/2 text-center">
                 <div className="flex text-5xl justify-center">
-                  88
+                {sensorReadings?.attributes?.fog_humidity}
                   <p className="text-lg right-1/2 ml-1"> %</p>
                 </div>
                 <p>Humidity</p>
                 <div className="flex justify-center mt-2">
-                <Line width={"110%"} height={"45%"} options={options} data={tempData} />
+                <Line width={"110%"} height={"45%"} options={options} data={chartFogHumidity} />
                 </div>
               </div>
 
@@ -374,22 +540,22 @@ let Dashboard = () => {
             <div className="border-slate-400 border h-1/3 mb-4 rounded flex relative">
               <div className="flex flex-col justify-center align-middle w-1/2 text-center">
                 <div className="flex text-5xl justify-center">
-                  245
+                  {sensorReadings?.attributes?.fog_light_intensity}
                   <p className="text-sm right-1/2 ml-1">cd</p>
                 </div>
                 <p>Light Intensity</p>
                 <div className="flex justify-center mt-2">
-                <Line width={"110%"} height={"45%"} options={options} data={tempData} />
+                <Line width={"110%"} height={"45%"} options={options} data={chartFogLightIntensity} />
                 </div>
               </div>
               <div className="flex flex-col justify-center align-middle w-1/2 text-center">
                 <div className="flex text-4xl justify-center">
-                  1242
+                  {sensorReadings?.attributes?.fog_co2}
                   <p className="text-sm right-1/2 ml-1"> ppm</p>
                 </div>
                 <p>CO2 Level</p>
                 <div className="flex justify-center mt-2">
-                <Line width={"110%"} height={"45%"} options={options} data={humidityData} />
+                <Line width={"110%"} height={"45%"} options={options} data={chartFogCO2Level} />
                 </div>
               </div>
 

@@ -32,6 +32,7 @@ export default function NavBar() {
   }, [])
 
   const routeTo = (link) => {
+    console.log('current route')
     if(link=='settings'){ router.push('/settings'); return; }
     console.log('route to: ', link)
     router.push(`/dashboard/${link}`)

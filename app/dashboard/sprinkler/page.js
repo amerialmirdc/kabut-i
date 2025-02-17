@@ -126,25 +126,25 @@ let Dashboard = () => {
   }
 
   const fetchChartReadings = async () => {
-    let formattedFogTemp = [];
-    let formattedFogHumidity = [];
-    let formattedFogLightIntensity = [];
-    let formattedFogCO2Level = [];
+    let formattedSPRTemp = [];
+    let formattedSPRHumidity = [];
+    let formattedSPRLightIntensity = [];
+    let formattedSPRCO2Level = [];
 
     const data = await getDashboardChartData()
     console.log('chart data', data)
     data.forEach(i=>{
-      formattedFogTemp.push(i?.attributes.fog_temperature)
-      formattedFogHumidity.push(i?.attributes.fog_humidity)
-      formattedFogLightIntensity.push(i?.attributes.fog_light_intensity)
-      formattedFogCO2Level.push(i?.attributes.fog_co2)
+      formattedSPRTemp.push(i?.attributes.spr_temperature)
+      formattedSPRHumidity.push(i?.attributes.spr_humidity)
+      formattedSPRLightIntensity.push(i?.attributes.spr_light_intensity)
+      formattedSPRCO2Level.push(i?.attributes.spr_co2)
     })
     setChartFogTemp({
       labels,
       datasets: [
         {
           label: 'Dataset 1',
-          data: formattedFogTemp,
+          data: formattedSPRTemp,
           borderColor: '#49ABDF',
           lineTension: 0.4
         }
@@ -155,7 +155,7 @@ let Dashboard = () => {
       datasets: [
         {
           label: 'Dataset 1',
-          data: formattedFogHumidity,
+          data: formattedSPRHumidity,
           borderColor: '#49ABDF',
           lineTension: 0.4
         }
@@ -166,7 +166,7 @@ let Dashboard = () => {
       datasets: [
         {
           label: 'Dataset 1',
-          data: formattedFogLightIntensity,
+          data: formattedSPRLightIntensity,
           borderColor: '#49ABDF',
           lineTension: 0.4
         }
@@ -177,7 +177,7 @@ let Dashboard = () => {
       datasets: [
         {
           label: 'Dataset 1',
-          data: formattedFogCO2Level,
+          data: formattedSPRCO2Level,
           borderColor: '#49ABDF',
           lineTension: 0.4
         }
@@ -515,7 +515,7 @@ let Dashboard = () => {
             <div className="border-slate-400 border h-1/3 mb-4 rounded flex relative">
               <div className="flex flex-col justify-center align-middle w-1/2 text-center">
                 <div className="flex text-5xl justify-center">
-                  {sensorReadings?.attributes?.fog_temperature}
+                  {sensorReadings?.attributes?.spr_temperature}
                   <p className="text-sm right-1/2 ml-1">°C</p>
                 </div>
                 <p>Temperature</p>
@@ -525,7 +525,7 @@ let Dashboard = () => {
               </div>
               <div className="flex flex-col justify-center align-middle w-1/2 text-center">
                 <div className="flex text-5xl justify-center">
-                {sensorReadings?.attributes?.fog_humidity}
+                {sensorReadings?.attributes?.spr_humidity}
                   <p className="text-lg right-1/2 ml-1"> %</p>
                 </div>
                 <p>Humidity</p>
@@ -540,7 +540,7 @@ let Dashboard = () => {
             <div className="border-slate-400 border h-1/3 mb-4 rounded flex relative">
               <div className="flex flex-col justify-center align-middle w-1/2 text-center">
                 <div className="flex text-5xl justify-center">
-                  {sensorReadings?.attributes?.fog_light_intensity}
+                  {sensorReadings?.attributes?.spr_light_intensity}
                   <p className="text-sm right-1/2 ml-1">cd</p>
                 </div>
                 <p>Light Intensity</p>
@@ -550,7 +550,7 @@ let Dashboard = () => {
               </div>
               <div className="flex flex-col justify-center align-middle w-1/2 text-center">
                 <div className="flex text-4xl justify-center">
-                  {sensorReadings?.attributes?.fog_co2}
+                  {sensorReadings?.attributes?.spr_co2}
                   <p className="text-sm right-1/2 ml-1"> ppm</p>
                 </div>
                 <p>CO2 Level</p>

@@ -52,10 +52,10 @@ export default function NavBar() {
                 <WaterDamageIcon style={{fontSize: '32px'}}></WaterDamageIcon>
                 <p className="text-sm">sprinkler</p>
               </div>
-              <div onClick={()=>{routeTo('settings')}} className="text-center px-2 h-full flex items-center flex-col justify-center text-white">
+              {/* <div onClick={()=>{routeTo('settings')}} className="text-center px-2 h-full flex items-center flex-col justify-center text-white">
                 <SettingsIcon style={{fontSize: '32px'}}></SettingsIcon>
                 <p className="text-sm">settings</p>
-              </div>
+              </div> */}
             </div>
           </div>
         }

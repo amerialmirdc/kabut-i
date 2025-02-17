@@ -110,6 +110,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
+
 export default function Temperature() {
   const [startDate, setStartDate] = useState(new Date());
   const [currentParam, setCurrentParam] = useState('')
@@ -148,40 +149,40 @@ export default function Temperature() {
     console.log('data', data)
     setData(data)
 
-    let formattedFogTemp = [];
-    let formattedFogHumidity = [];
-    let formattedFogLightIntensity = [];
-    let formattedFogCO2Level = [];
+    let formattedSPRTemp = [];
+    let formattedSPRHumidity = [];
+    let formattedSPRLightIntensity = [];
+    let formattedSPRCO2Level = [];
 
     console.log('chart data', data)
     data.forEach(i=>{
-      formattedFogTemp.push({
-        reading: i?.attributes.fog_temperature,
+      formattedSPRTemp.push({
+        reading: i?.attributes.spr_temperature,
         date: `${moment(i?.attributes.createdAt).format('LT')} ${moment(i?.attributes.createdAt).format('ll')}`,
         id: i?.id
       })
-      formattedFogHumidity.push({
-        reading: i?.attributes.fog_humidity,
+      formattedSPRHumidity.push({
+        reading: i?.attributes.spr_humidity,
         date: `${moment(i?.attributes.createdAt).format('LT')} ${moment(i?.attributes.createdAt).format('ll')}`,
         id: i?.id
       })
-      formattedFogLightIntensity.push({
-        reading: i?.attributes.fog_light_intensity,
+      formattedSPRLightIntensity.push({
+        reading: i?.attributes.spr_light_intensity,
         date: `${moment(i?.attributes.createdAt).format('LT')} ${moment(i?.attributes.createdAt).format('ll')}`,
         id: i?.id
       })
-      formattedFogCO2Level.push({
-        reading: i?.attributes.fog_co2,
+      formattedSPRCO2Level.push({
+        reading: i?.attributes.spr_co2,
         date: `${moment(i?.attributes.createdAt).format('LT')} ${moment(i?.attributes.createdAt).format('ll')}`,
         id: i?.id
       })
     })
 
     setParamsData({
-      temp: formattedFogTemp,
-      humid: formattedFogHumidity,
-      light: formattedFogLightIntensity,
-      CO2: formattedFogCO2Level
+      temp: formattedSPRTemp,
+      humid: formattedSPRHumidity,
+      light: formattedSPRLightIntensity,
+      CO2: formattedSPRCO2Level
     })
   }
 

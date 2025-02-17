@@ -14,7 +14,7 @@ import PaginatedItems from "@/app/components/paginated-items";
 import axios from 'axios'
 import moment from 'moment'
 import {getCurrentReadings, getDashboardChartData} from '@/app/composables/fetchSensorReadings'
-import { useRouter } from 'next/navigation'
+import { useRouter, useParams } from 'next/navigation'
 
 import {
   Chart as ChartJS,
@@ -45,6 +45,7 @@ let Dashboard = () => {
   const [weather, setWeather] = useState({})
   const [sensorReadings, setSensorReadings] = useState([])
   const router = useRouter()
+  const params = useParams()
   const [chartFogTemp, setChartFogTemp] = useState({
     labels: ['1','1','1','1','1'],
     datasets: [

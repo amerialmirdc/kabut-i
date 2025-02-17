@@ -91,7 +91,7 @@ let Dashboard = () => {
 
   let defaultMobileWidth = 450;
 
-  const weather_url = `http://api.weatherapi.com/v1/current.json?key=44b78a570b194d2c9fb21417251402&q=17.7360796,120.4670137`;
+  const weather_url = `https://api.weatherapi.com/v1/current.json?key=44b78a570b194d2c9fb21417251402&q=17.7360796,120.4670137`;
 
   const fetchWeather = async () => {
     await axios.get(weather_url).then(res=>{

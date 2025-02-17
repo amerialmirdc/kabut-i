@@ -14,6 +14,7 @@ import PaginatedItems from "@/app/components/paginated-items";
 import axios from 'axios'
 import moment from 'moment'
 import {getCurrentReadings, getDashboardChartData} from '@/app/composables/fetchSensorReadings'
+import { useRouter } from 'next/navigation'
 
 import {
   Chart as ChartJS,
@@ -43,6 +44,7 @@ let Dashboard = () => {
   const [isMobile, setIsMobile] = useState(false)
   const [weather, setWeather] = useState({})
   const [sensorReadings, setSensorReadings] = useState([])
+  const router = useRouter()
   const [chartFogTemp, setChartFogTemp] = useState({
     labels: ['1','1','1','1','1'],
     datasets: [
@@ -513,7 +515,7 @@ let Dashboard = () => {
               </div>
             </div>
             <div className="border-slate-400 border h-1/3 mb-4 rounded flex relative">
-              <div className="flex flex-col justify-center align-middle w-1/2 text-center">
+              <div onClick={()=>{router.push('/dashboard/fogger/temperature')}} className="flex flex-col justify-center align-middle w-1/2 text-center">
                 <div className="flex text-5xl justify-center">
                   {sensorReadings?.attributes?.fog_temperature}
                   <p className="text-sm right-1/2 ml-1">°C</p>
@@ -523,7 +525,7 @@ let Dashboard = () => {
                 <Line width={"110%"} height={"45%"} options={options} data={chartFogTemp} />
                 </div>
               </div>
-              <div className="flex flex-col justify-center align-middle w-1/2 text-center">
+              <div onClick={()=>{router.push('/dashboard/fogger/humidity')}} className="flex flex-col justify-center align-middle w-1/2 text-center">
                 <div className="flex text-5xl justify-center">
                 {sensorReadings?.attributes?.fog_humidity}
                   <p className="text-lg right-1/2 ml-1"> %</p>
@@ -538,7 +540,7 @@ let Dashboard = () => {
               <div className="border-slate-400 border-r h-full ml-5 absolute right-1/2"></div>
             </div>
             <div className="border-slate-400 border h-1/3 mb-4 rounded flex relative">
-              <div className="flex flex-col justify-center align-middle w-1/2 text-center">
+              <div onClick={()=>{router.push('/dashboard/fogger/light-intensity')}} className="flex flex-col justify-center align-middle w-1/2 text-center">
                 <div className="flex text-5xl justify-center">
                   {sensorReadings?.attributes?.fog_light_intensity}
                   <p className="text-sm right-1/2 ml-1">cd</p>
@@ -548,7 +550,7 @@ let Dashboard = () => {
                 <Line width={"110%"} height={"45%"} options={options} data={chartFogLightIntensity} />
                 </div>
               </div>
-              <div className="flex flex-col justify-center align-middle w-1/2 text-center">
+              <div onClick={()=>{router.push('/dashboard/fogger/co2')}} className="flex flex-col justify-center align-middle w-1/2 text-center">
                 <div className="flex text-4xl justify-center">
                   {sensorReadings?.attributes?.fog_co2}
                   <p className="text-sm right-1/2 ml-1"> ppm</p>

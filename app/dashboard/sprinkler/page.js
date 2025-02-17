@@ -482,28 +482,28 @@ let Dashboard = () => {
               <p className="absolute">Ilocos Sur, San Juan</p>
               <div className="flex flex-col h-full justify-center">
                 <div className="text-center">
-                  <div className="flex text-5xl justify-center">
+                  <div className="flex text-4xl justify-center">
                     {moment(weather?.date_time).format('LT')}
                   </div>
                   <p>{moment(weather?.date_time).format('ll')}</p>
                 </div>
                 <div className="flex justify-center mt-3">
                   <div>
-                    <div className="flex text-5xl justify-center">
+                    <div className="flex text-4xl justify-center">
                       {weather?.temp_in_c}
                       <p className="text-lg right-1/2 ml-1"> °C</p>
                     </div>
                     <p>{weather?.condition?.text}</p>
                   </div>
                   <div className="mx-6">
-                    <div className="flex text-5xl justify-center">
+                    <div className="flex text-4xl justify-center">
                       {weather?.humidity}
                       <p className="text-lg right-1/2 ml-1"> %</p>
                     </div>
                     <p>Humidity</p>
                   </div>
                   <div>
-                    <div className="flex text-5xl justify-center">
+                    <div className="flex text-4xl justify-center">
                       {weather?.precip}
                       <p className="text-lg right-1/2 ml-1"> mm</p>
                     </div>

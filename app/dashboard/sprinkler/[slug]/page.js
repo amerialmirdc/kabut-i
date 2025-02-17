@@ -110,13 +110,57 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-
 export default function Temperature() {
   const [startDate, setStartDate] = useState(new Date());
   const [currentParam, setCurrentParam] = useState('')
   const [paramsData, setParamsData] = useState([])
+  const [currentReadings, setCurrentReadings] = useState([])
   const [data, setData] = useState([])
   const params = useParams()
+  const [chartFogTemp, setChartFogTemp] = useState({
+    labels: ['1','1','1','1','1'],
+    datasets: [
+      {
+        label: 'Dataset 1',
+        data: [1,1,1,1,1],
+        borderColor: '#49ABDF',
+        lineTension: 0.4
+      }
+    ],
+  })
+  const [chartFogHumidity, setChartFogHumidity] = useState({
+    labels: ['1','1','1','1','1'],
+    datasets: [
+      {
+        label: 'Dataset 1',
+        data: [1,1,1,1,1],
+        borderColor: '#49ABDF',
+        lineTension: 0.4
+      }
+    ],
+  })
+  const [chartFogLightIntensity, setChartFogLightIntensity] = useState({
+    labels: ['1','1','1','1','1'],
+    datasets: [
+      {
+        label: 'Dataset 1',
+        data: [1,1,1,1,1],
+        borderColor: '#49ABDF',
+        lineTension: 0.4
+      }
+    ],
+  })
+  const [chartFogCO2Level, setChartFogCO2Level] = useState({
+    labels: ['1','1','1','1','1'],
+    datasets: [
+      {
+        label: 'Dataset 1',
+        data: [1,1,1,1,1],
+        borderColor: '#49ABDF',
+        lineTension: 0.4
+      }
+    ],
+  })
 
   const checkParams = () => {
     console.log('params', params.slug)
@@ -146,49 +190,110 @@ export default function Temperature() {
 
   const fetchChartReadings = async () => {
     const data = await getDashboardChartData()
+    const currentReadings = await getCurrentReadings()
+    setCurrentReadings(currentReadings[0])
+
+    console.log('current readings', currentReadings[0])
+
     console.log('data', data)
     setData(data)
 
-    let formattedSPRTemp = [];
-    let formattedSPRHumidity = [];
-    let formattedSPRLightIntensity = [];
-    let formattedSPRCO2Level = [];
+    let formattedFogTemp = [];
+    let formattedFogHumidity = [];
+    let formattedFogLightIntensity = [];
+    let formattedFogCO2Level = [];
+
+    let formattedFogTemp_ = [];
+    let formattedFogHumidity_ = [];
+    let formattedFogLightIntensity_ = [];
+    let formattedFogCO2Level_ = [];
 
     console.log('chart data', data)
     data.forEach(i=>{
-      formattedSPRTemp.push({
+      formattedFogTemp.push({
         reading: i?.attributes.spr_temperature,
         date: `${moment(i?.attributes.createdAt).format('LT')} ${moment(i?.attributes.createdAt).format('ll')}`,
         id: i?.id
       })
-      formattedSPRHumidity.push({
+      formattedFogHumidity.push({
         reading: i?.attributes.spr_humidity,
         date: `${moment(i?.attributes.createdAt).format('LT')} ${moment(i?.attributes.createdAt).format('ll')}`,
         id: i?.id
       })
-      formattedSPRLightIntensity.push({
+      formattedFogLightIntensity.push({
         reading: i?.attributes.spr_light_intensity,
         date: `${moment(i?.attributes.createdAt).format('LT')} ${moment(i?.attributes.createdAt).format('ll')}`,
         id: i?.id
       })
-      formattedSPRCO2Level.push({
+      formattedFogCO2Level.push({
         reading: i?.attributes.spr_co2,
         date: `${moment(i?.attributes.createdAt).format('LT')} ${moment(i?.attributes.createdAt).format('ll')}`,
         id: i?.id
       })
+
+      formattedFogTemp_.push(i?.attributes.spr_temperature)
+      formattedFogHumidity_.push(i?.attributes.spr_humidity)
+      formattedFogLightIntensity_.push(i?.attributes.spr_light_intensity)
+      formattedFogCO2Level_.push(i?.attributes.spr_co2)
     })
 
     setParamsData({
-      temp: formattedSPRTemp,
-      humid: formattedSPRHumidity,
-      light: formattedSPRLightIntensity,
-      CO2: formattedSPRCO2Level
+      temp: formattedFogTemp,
+      humid: formattedFogHumidity,
+      light: formattedFogLightIntensity,
+      CO2: formattedFogCO2Level
+    })
+
+    setChartFogTemp({
+      labels,
+      datasets: [
+        {
+          label: 'Dataset 1',
+          data: formattedFogTemp_,
+          borderColor: '#49ABDF',
+          lineTension: 0.4
+        }
+      ],
+    })
+    setChartFogHumidity({
+      labels,
+      datasets: [
+        {
+          label: 'Dataset 1',
+          data: formattedFogHumidity_,
+          borderColor: '#49ABDF',
+          lineTension: 0.4
+        }
+      ],
+    })
+    setChartFogLightIntensity({
+      labels,
+      datasets: [
+        {
+          label: 'Dataset 1',
+          data: formattedFogLightIntensity_,
+          borderColor: '#49ABDF',
+          lineTension: 0.4
+        }
+      ],
+    })
+    setChartFogCO2Level({
+      labels,
+      datasets: [
+        {
+          label: 'Dataset 1',
+          data: formattedFogCO2Level_,
+          borderColor: '#49ABDF',
+          lineTension: 0.4
+        }
+      ],
     })
   }
 
   useEffect(()=>{
     checkParams()
     fetchChartReadings()
+    
   }, [])
 
   return (
@@ -197,8 +302,31 @@ export default function Temperature() {
             <div className='w-1/3 flex items-center justify-center'>
                 <div className='text-center'>
                     <div className="flex text-4xl justify-center font-bold">
-                        29.3
-                        <p className="text-lg right-1/2 ml-1"> °C</p>
+                        { currentParam==='temperature' && 
+                          <>
+                            { currentReadings?.attributes?.spr_temperature }
+                            <p className="text-lg right-1/2 ml-1"> °C</p>
+                          </>
+                        }
+                        { currentParam==='humidity' && 
+                          <>
+                            { currentReadings?.attributes?.spr_humidity  }
+                            <p className="text-lg right-1/2 ml-1"> %</p>
+                          </>
+                        }
+                        { currentParam==='light-intensity' && 
+                          <>
+                            { currentReadings?.attributes?.spr_light_intensity   }
+                            <p className="text-lg right-1/2 ml-1"> cd</p>
+                          </>
+                        }
+                        { currentParam==='co2' && 
+                          <>
+                            { currentReadings?.attributes?.spr_co2   }
+                            <p className="text-lg right-1/2 ml-1"> ppm</p>
+                          </>
+                        }
+                        
                     </div>
                     <p className='text-xs capitalize'>Current <br/>{currentParam} </p>
                 </div>
@@ -220,7 +348,18 @@ export default function Temperature() {
                 </div>
             </div>
             <div className='w-1/3 flex items-center justify-center px-2'>
-                <Line width={"100%"} height={"45%"} options={options} data={tempData} />
+                { currentParam==='temperature' &&
+                  <Line width={"100%"} height={"45%"} options={options} data={chartFogTemp} />
+                }
+                { currentParam==='humidity' &&
+                  <Line width={"100%"} height={"45%"} options={options} data={chartFogHumidity} />
+                }
+                { currentParam==='light-intensity' &&
+                  <Line width={"100%"} height={"45%"} options={options} data={chartFogLightIntensity} />
+                }
+                { currentParam==='co2' &&
+                  <Line width={"100%"} height={"45%"} options={options} data={chartFogCO2Level} />
+                }
             </div>
         </div>
         <div className="border-slate-400 border h-1/3 mb-3 rounded p-2 relative flex justify-between">

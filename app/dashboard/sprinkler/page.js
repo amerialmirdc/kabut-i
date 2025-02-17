@@ -483,9 +483,9 @@ let Dashboard = () => {
               <div className="flex flex-col h-full justify-center">
                 <div className="text-center">
                   <div className="flex text-5xl justify-center">
-                    {moment(weather.date_time).format('LT')}
+                    {moment(weather?.date_time).format('LT')}
                   </div>
-                  <p>{moment(weather.date_time).format('ll')}</p>
+                  <p>{moment(weather?.date_time).format('ll')}</p>
                 </div>
                 <div className="flex justify-center mt-3">
                   <div>
@@ -497,14 +497,14 @@ let Dashboard = () => {
                   </div>
                   <div className="mx-6">
                     <div className="flex text-5xl justify-center">
-                      {weather.humidity}
+                      {weather?.humidity}
                       <p className="text-lg right-1/2 ml-1"> %</p>
                     </div>
                     <p>Humidity</p>
                   </div>
                   <div>
                     <div className="flex text-5xl justify-center">
-                      {weather.precip}
+                      {weather?.precip}
                       <p className="text-lg right-1/2 ml-1"> mm</p>
                     </div>
                     <p>Precipitation</p>

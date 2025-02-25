@@ -19,7 +19,7 @@ const SensorReadingSchema = new Schema(
             require: true
         },
         spr_light_intensity: {
-            type: Number,
+            type: String, // made string to catch trial data
             require: true
         },
         spr_co2: {
@@ -31,7 +31,7 @@ const SensorReadingSchema = new Schema(
             require: true
         },
         spr_temperature: {
-            type: Number,
+            type: String, // made string to catch trial data
             require: true
         },
     },

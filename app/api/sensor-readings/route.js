@@ -46,60 +46,60 @@ export const POST = async (request) => {
         console.log('body', body)
 
         // send to mongodb
-        await connect();
-        const newReadings = new SensorReading({
-            fog_light_intensity: fog_light_intensity,
-            fog_co2: fog_co2,
-            fog_humidity: fog_humidity,
-            fog_temperature: fog_temperature,
-            spr_light_intensity: spr_light_intensity,
-            spr_co2: spr_co2,
-            spr_humidity: spr_humidity,
-            spr_temperature: spr_temperature
-        });
-        await newReadings.save()
+        // await connect();
+        // const newReadings = new SensorReading({
+        //     fog_light_intensity: fog_light_intensity,
+        //     fog_co2: fog_co2,
+        //     fog_humidity: fog_humidity,
+        //     fog_temperature: fog_temperature,
+        //     spr_light_intensity: spr_light_intensity,
+        //     spr_co2: spr_co2,
+        //     spr_humidity: spr_humidity,
+        //     spr_temperature: spr_temperature
+        // });
+        // await newReadings.save()
 
-        return new NextResponse(JSON.stringify({message: 'sent data to mongodb' }),
-            {status: 200}
-        );
+        // return new NextResponse(JSON.stringify({message: 'sent data to mongodb' }),
+        //     {status: 200}
+        // );
         
 
         // send data to amerial server
-        // await axios.post('https://i-pond-backend.ap.ngrok.io/api/kabuti-readings', body, config)
-        //     .then(async response => {
-        //       // send to mongodb
-        //         await connect();
-        //         const newReadings = new SensorReading({
-        //             fog_light_intensity: fog_light_intensity,
-        //             fog_co2: fog_co2,
-        //             fog_humidity: fog_humidity,
-        //             fog_temperature: fog_temperature,
-        //             spr_light_intensity: spr_light_intensity,
-        //             spr_co2: spr_co2,
-        //             spr_humidity: spr_humidity,
-        //             spr_temperature: spr_temperature
-        //         });
-        //         await newReadings.save()
-        //         // end
+        await axios.post('https://i-pond-backend.ap.ngrok.io/api/kabuti-readings', body, config)
+            .then(async response => {
+              // send to mongodb
+                await connect();
+                const newReadings = new SensorReading({
+                    fog_light_intensity: fog_light_intensity,
+                    fog_co2: fog_co2,
+                    fog_humidity: fog_humidity,
+                    fog_temperature: fog_temperature,
+                    spr_light_intensity: spr_light_intensity,
+                    spr_co2: spr_co2,
+                    spr_humidity: spr_humidity,
+                    spr_temperature: spr_temperature
+                });
+                await newReadings.save()
+                // end
 
-        //         response_ = response
-        //         console.log('success')
-        //     }).catch(err => {
-        //         error_ = err;
-        //         console.log('error')
-        //     })
-        // //end
+                response_ = response
+                console.log('success')
+            }).catch(err => {
+                error_ = err;
+                console.log('error')
+            })
+        //end
 
-        // if(error_){
-        //     console.log(error_)
-        //     return new NextResponse(JSON.stringify({message: 'Error in sending data to amerial server', error: error_}),
-        //         {status: 500}
-        //     );
-        // }else{
-        //     return new NextResponse(JSON.stringify({message: 'sent data to amerial server', data: response_.data }),
-        //         {status: 200}
-        //     );
-        // }
+        if(error_){
+            console.log(error_)
+            return new NextResponse(JSON.stringify({message: 'Error in sending data to amerial server', error: error_}),
+                {status: 500}
+            );
+        }else{
+            return new NextResponse(JSON.stringify({message: 'sent data to amerial server', data: response_.data }),
+                {status: 200}
+            );
+        }
         
     }catch (error) {
         return new NextResponse("Error in inserting sensor readings " + error.message, {status: 500});

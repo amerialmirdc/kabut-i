@@ -166,10 +166,10 @@ let Dashboard = () => {
     const data = await getDashboardChartData()
     console.log('chart data', data)
     data.forEach(i=>{
-      formattedFogTemp.push(i?.attributes.fog_temperature)
-      formattedFogHumidity.push(i?.attributes.fog_humidity)
-      formattedFogLightIntensity.push(i?.attributes.fog_light_intensity)
-      formattedFogCO2Level.push(i?.attributes.fog_co2)
+      formattedFogTemp.push(i?.attributes.spr_temperature)
+      formattedFogHumidity.push(i?.attributes.spr_humidity)
+      formattedFogLightIntensity.push(i?.attributes.spr_light_intensity)
+      formattedFogCO2Level.push(i?.attributes.spr_co2)
     })
     setChartFogTemp({
       labels,
@@ -713,9 +713,9 @@ let Dashboard = () => {
               </div>
             </div>
             <div className="border-slate-400 border h-1/3 mb-4 rounded flex relative">
-              <div onClick={()=>{router.push('/dashboard/fogger/temperature')}} className="flex flex-col justify-center align-middle w-1/2 text-center">
+              <div onClick={()=>{router.push('/dashboard/sprinkler/temperature')}} className="flex flex-col justify-center align-middle w-1/2 text-center">
                 <div className="flex text-5xl justify-center">
-                  {sensorReadings?.attributes?.fog_temperature}
+                  {sensorReadings?.attributes?.spr_temperature}
                   <p className="text-sm right-1/2 ml-1">°C</p>
                 </div>
                 <p>Temperature</p>
@@ -723,9 +723,9 @@ let Dashboard = () => {
                 <Line width={"110%"} height={"45%"} options={options} data={chartFogTemp} />
                 </div>
               </div>
-              <div onClick={()=>{router.push('/dashboard/fogger/humidity')}} className="flex flex-col justify-center align-middle w-1/2 text-center">
+              <div onClick={()=>{router.push('/dashboard/sprinkler/humidity')}} className="flex flex-col justify-center align-middle w-1/2 text-center">
                 <div className="flex text-5xl justify-center">
-                {sensorReadings?.attributes?.fog_humidity}
+                {sensorReadings?.attributes?.spr_humidity}
                   <p className="text-lg right-1/2 ml-1"> %</p>
                 </div>
                 <p>Humidity</p>
@@ -738,9 +738,9 @@ let Dashboard = () => {
               <div className="border-slate-400 border-r h-full ml-5 absolute right-1/2"></div>
             </div>
             <div className="border-slate-400 border h-1/3 mb-4 rounded flex relative">
-              <div onClick={()=>{router.push('/dashboard/fogger/light-intensity')}} className="flex flex-col justify-center align-middle w-1/2 text-center">
+              <div onClick={()=>{router.push('/dashboard/sprinkler/light-intensity')}} className="flex flex-col justify-center align-middle w-1/2 text-center">
                 <div className="flex text-5xl justify-center">
-                  {sensorReadings?.attributes?.fog_light_intensity}
+                  {sensorReadings?.attributes?.spr_light_intensity}
                   <p className="text-sm right-1/2 ml-1">cd</p>
                 </div>
                 <p>Light Intensity</p>
@@ -748,9 +748,9 @@ let Dashboard = () => {
                 <Line width={"110%"} height={"45%"} options={options} data={chartFogLightIntensity} />
                 </div>
               </div>
-              <div onClick={()=>{router.push('/dashboard/fogger/co2')}} className="flex flex-col justify-center align-middle w-1/2 text-center">
+              <div onClick={()=>{router.push('/dashboard/sprinkler/co2')}} className="flex flex-col justify-center align-middle w-1/2 text-center">
                 <div className="flex text-4xl justify-center">
-                  {sensorReadings?.attributes?.fog_co2}
+                  {sensorReadings?.attributes?.spr_co2}
                   <p className="text-sm right-1/2 ml-1"> ppm</p>
                 </div>
                 <p>CO2 Level</p>

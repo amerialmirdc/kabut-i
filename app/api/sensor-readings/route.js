@@ -5,7 +5,7 @@ import { headers } from 'next/headers'
 import axios from 'axios'
 
 
-export const GET = async () => {
+export const GET = async () => { 
     try{
 
         // mongodb 
@@ -65,7 +65,7 @@ export const POST = async (request) => {
         
 
         // send data to amerial server
-        await axios.post('https://i-pond-backend.ap.ngrok.io/api/kabuti-readings', body, config)
+        await axios.post(`https://i-pond-backend.ap.ngrok.io/api/kabuti-readings`, body, config)
             .then(async response => {
               // send to mongodb
                 await connect();

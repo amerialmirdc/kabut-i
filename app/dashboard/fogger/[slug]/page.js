@@ -111,7 +111,11 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }));
 
 export default function Temperature() {
-  const [startDate, setStartDate] = useState(new Date());
+  const [dateFrom, setDateFrom] = useState(new Date());
+  const [dateTo, setDateTo] = useState(new Date());
+  const [_sort, setSort] = useState('desc')
+  const [page, setPage] = useState(1)
+  const [paginationCount, setPaginationCount] = useState(1)
   const [currentParam, setCurrentParam] = useState('')
   const [paramsData, setParamsData] = useState([])
   const [currentReadings, setCurrentReadings] = useState([])
@@ -188,10 +192,11 @@ export default function Temperature() {
     }
   }
 
-  const fetchChartReadings = async () => {
-    const data = await getDashboardChartData()
+  const fetchChartReadings = async (datefrom, dateto, sort, _offset) => {
+    const {data, meta} = await getDashboardChartData(datefrom, dateto, sort, _offset)
     const currentReadings = await getCurrentReadings()
     setCurrentReadings(currentReadings[0])
+    setPaginationCount(Math.ceil(meta?.pagination.total/21))
 
     console.log('current readings', currentReadings[0])
 
@@ -292,9 +297,34 @@ export default function Temperature() {
 
   useEffect(()=>{
     checkParams()
-    fetchChartReadings()
+    fetchChartReadings(dateFrom, dateTo, _sort, (page*21)-21)
     
   }, [])
+
+  const handleSetDateFrom = async (date) => {
+    setDateFrom(date)
+    console.log(date)
+    // refetch data
+    await fetchChartReadings(date, dateTo, _sort, (page*21)-21)
+  }
+
+  const handleSetDateTo = async (date) => {
+    setDateTo(date)
+    console.log(date)
+    // refetch data
+    await fetchChartReadings(dateFrom, date, _sort, (page*21)-21)
+  }
+  
+  const handleSetSort = async (sort) => {
+    setSort(sort)
+    await fetchChartReadings(dateFrom, dateTo, sort, (page*21)-21)
+  }
+
+  const handleSetPage = async (_page) => {
+    setPage(_page)
+    console.log(_page)
+    await fetchChartReadings(dateFrom, dateTo, _sort, (_page*21)-21)
+  }
 
   return (
     <div className='p-4'>
@@ -364,15 +394,15 @@ export default function Temperature() {
         </div>
         <div className="border-slate-400 border h-1/3 mb-3 rounded p-2 relative flex justify-between">
             <FileDownloadIcon className='border-slate-300 border rounded'></FileDownloadIcon>
-            <select name="sort" id="sort" className='border-slate-300 border rounded' style={{width: '15%'}}>
+            <select value={_sort} onChange={(e) => handleSetSort(e.target.value) } name="sort" id="sort" className='border-slate-300 border rounded' style={{width: '15%'}}>
                 <option value="asc">asc</option>
                 <option value="desc">desc</option>
             </select>
             <div className=''>
                 <label className=''>from:</label>
-                <DatePicker className='border-slate-300 border rounded w-24' selected={startDate} onChange={(date) => setStartDate(date)}/>
+                <DatePicker className='border-slate-300 border rounded w-24' selected={dateFrom} onChange={(date) => handleSetDateFrom(date)}/>
                 <label className=''>to:</label>
-                <DatePicker className='border-slate-300 border rounded w-24' selected={startDate} onChange={(date) => setStartDate(date)}/>
+                <DatePicker className='border-slate-300 border rounded w-24' selected={dateTo} onChange={(date) => handleSetDateTo(date)}/>
             </div>
         </div>
         <div>
@@ -458,7 +488,7 @@ export default function Temperature() {
         </div>
         <div className="border-slate-400 border h-1/3 mt-3 rounded py-2 relative flex justify-center">
             <Stack spacing={3}>
-                <Pagination  count={11} defaultPage={6} variant="outlined" shape="rounded" />
+                <Pagination onChange={(e, page)=>handleSetPage(page)}  count={paginationCount} page={page} variant="outlined" shape="rounded" />
             </Stack>
         </div>
     </div>

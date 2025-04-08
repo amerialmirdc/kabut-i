@@ -163,7 +163,7 @@ let Dashboard = () => {
     let formattedFogLightIntensity = [];
     let formattedFogCO2Level = [];
 
-    const data = await getDashboardChartData()
+    const {data} = await getDashboardChartData(new Date(), new Date(), 'desc', 0)
     console.log('chart data', data)
     data.forEach(i=>{
       formattedFogTemp.push(i?.attributes.spr_temperature)
@@ -450,6 +450,20 @@ let Dashboard = () => {
     }
   }
 
+  const sort = (val) => {
+    console.log('sort', val)
+  }
+
+  const setDateFrom = (date) => {
+    setStartDate(date)
+    console.log('set date from', date)
+  }
+
+  const setDateTo = (date) => {
+    setStartDate(date)
+    console.log('set date to', date)
+  }
+
   return (
     <div className="text-gray-600">
       {/* for desktop */}
@@ -592,14 +606,14 @@ let Dashboard = () => {
                 </div>
                 <div className=''>
                   <label className='mr-2'>Sort:</label>
-                  <select name="sort" id="sort" className='border-slate-300 border rounded h-9 w-20 pl-2'>
+                  <select name="sort" id="sort" className='border-slate-300 border rounded h-9 w-20 pl-2' onChange={e=>sort(e.target.value)}>
                     <option value="asc">asc</option>
                     <option value="desc">desc</option>
                   </select>
                   <label className='mr-2 ml-3'>From:</label>
-                  <DatePicker className='border-slate-300 border rounded w-32 h-9 pl-2' selected={startDate} onChange={(date) => setStartDate(date)}/>
+                  <DatePicker className='border-slate-300 border rounded w-32 h-9 pl-2' selected={startDate} onChange={(date) => setDateFrom(date)}/>
                   <label className='ml-3 mr-2'>To:</label>
-                  <DatePicker className='border-slate-300 border rounded w-32 h-9 pl-2' selected={startDate} onChange={(date) => setStartDate(date)}/>
+                  <DatePicker className='border-slate-300 border rounded w-32 h-9 pl-2' selected={startDate} onChange={(date) => setDateTo(date)}/>
                   <FilterAltIcon className='ml-1' style={{fontSize: '36px', color: 'rgb(14 165 233)'}}></FilterAltIcon>
                 </div>
               </div>

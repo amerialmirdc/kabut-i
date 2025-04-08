@@ -163,7 +163,7 @@ let Dashboard = () => {
     let formattedFogLightIntensity = [];
     let formattedFogCO2Level = [];
 
-    const data = await getDashboardChartData()
+    const {data} = await getDashboardChartData(new Date(), new Date(), 'desc', 0)
     console.log('chart data', data)
     data.forEach(i=>{
       formattedFogTemp.push(i?.attributes.fog_temperature)

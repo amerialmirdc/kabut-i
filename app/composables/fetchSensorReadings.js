@@ -44,8 +44,26 @@ const getDashboardChartData = async (dateFrom, dateTo, sort, offset) => {
     return {data, meta}
 }
 
+const getTodayHighLowReadings = async (dateFrom, dateTo) => {
+    let data2 = {}
+    
+    console.log(localStorage.getItem('token'))
+    console.log('LH date:', displayDateOnly(dateFrom))
+    console.log('LH date:', displayDateOnly(moment(dateTo).add(1,'d')))
+
+    await axios.get(`${server_url}/kabuti-readings?filters[createdAt][$gte]=${displayDateOnly(dateFrom)}T00:00:00Z&filters[createdAt][$lte]=${displayDateOnly(moment(dateTo).add(1,'d'))}T00:00:00Z`).then(res=>{
+        console.log('high:low: ', res)
+        data2 = res?.data.data
+    }).catch(err=>{
+        console.log(err)
+    })
+    
+    return {data2}
+}
+
 
 export {
     getCurrentReadings,
-    getDashboardChartData
+    getDashboardChartData,
+    getTodayHighLowReadings
 }

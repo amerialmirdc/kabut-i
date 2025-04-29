@@ -28,7 +28,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
 import { useParams } from 'next/navigation'
-import {getCurrentReadings, getDashboardChartData} from '@/app/composables/fetchSensorReadings'
+import {getCurrentReadings, getDashboardChartData, getTodayHighLowReadings} from '@/app/composables/fetchSensorReadings'
 
 ChartJS.register(
   CategoryScale,
@@ -121,6 +121,15 @@ export default function Temperature() {
   const [currentReadings, setCurrentReadings] = useState([])
   const [data, setData] = useState([])
   const params = useParams()
+  const [todayHighestTemp, settodayHighestTemp] = useState(0)
+  const [todayHighestHumidity, settodayHighestHumidity] = useState(0)
+  const [todayHighestLightIntensity,settodayHighestLightIntensity] = useState(0)
+  const [todayHighestCO2Level,settodayHighestCO2Level] = useState(0)
+  const [todayLowestTemp, settodayLowestTemp] = useState(0)
+  const [todayLowestHumidity, settodayLowestHumidity] = useState(0)
+  const [todayLowestLightIntensity,settodayLowestLightIntensity] = useState(0)
+  const [todayLowestCO2Level,settodayLowestCO2Level] = useState(0)
+
   const [chartFogTemp, setChartFogTemp] = useState({
     labels: ['1','1','1','1','1'],
     datasets: [
@@ -195,6 +204,7 @@ export default function Temperature() {
   const fetchChartReadings = async (datefrom, dateto, sort, _offset) => {
     const {data, meta} = await getDashboardChartData(datefrom, dateto, sort, _offset)
     const currentReadings = await getCurrentReadings()
+
     setCurrentReadings(currentReadings[0])
     setPaginationCount(Math.ceil(meta?.pagination.total/21))
 
@@ -295,9 +305,47 @@ export default function Temperature() {
     })
   }
 
+  const checkHighestLowest = async () => {
+    const {data2} = await getTodayHighLowReadings()
+    console.log('highest:lowest: ', data2)
+
+    let tempHighTemp = 0;
+    let tempHighHum = 0;
+    let tempHighCO2 = 0;
+    let tempHighLI = 0;
+    let tempLowTemp = data2[0]?.attributes.fog_temperature;
+    let tempLowHum = data2[0]?.attributes.fog_humidity;
+    let tempLowCO2 = data2[0]?.attributes.fog_co2;
+    let tempLowLI = data2[0]?.attributes.fog_light_intensity;
+    
+    data2?.forEach((readings)=>{
+      //check for highest
+      if(readings?.attributes.fog_temperature > tempHighTemp) tempHighTemp = readings?.attributes.fog_temperature
+      if(readings?.attributes.fog_humidity > tempHighHum) tempHighHum = readings?.attributes.fog_humidity
+      if(readings?.attributes.fog_co2 > tempHighCO2) tempHighCO2 = readings?.attributes.fog_co2
+      if(readings?.attributes.fog_light_intensity > tempHighLI) tempHighLI = readings?.attributes.fog_light_intensity
+
+      //check for lowest
+      if(readings?.attributes.fog_temperature < tempLowTemp) tempLowTemp = readings?.attributes.fog_temperature
+      if(readings?.attributes.fog_humidity < tempLowHum) tempLowHum = readings?.attributes.fog_humidity
+      if(readings?.attributes.fog_co2 < tempLowCO2) tempLowCO2 = readings?.attributes.fog_co2
+      if(readings?.attributes.fog_light_intensity < tempLowLI) tempLowLI = readings?.attributes.fog_light_intensity
+    })
+
+    settodayHighestTemp(tempHighTemp)
+    settodayHighestHumidity(tempHighHum)
+    settodayHighestCO2Level(tempHighCO2)
+    settodayHighestLightIntensity(tempHighLI)
+    settodayLowestTemp(tempLowTemp)
+    settodayLowestHumidity(tempLowHum)
+    settodayLowestCO2Level(tempLowCO2)
+    settodayLowestLightIntensity(tempLowLI)
+  }
+
   useEffect(()=>{
     checkParams()
     fetchChartReadings(dateFrom, dateTo, _sort, (page*21)-21)
+    checkHighestLowest()
     
   }, [])
 
@@ -363,17 +411,57 @@ export default function Temperature() {
             </div>
             <div className='w-1/3 flex flex-col justify-center items-center'>
                 <div className='text-center'>
-                    <div className="flex text-xl justify-center font-bold">
-                        29.3
+                    { currentParam==='temperature' && 
+                      <div className="flex text-xl justify-center font-bold">
+                        {todayHighestTemp}
                         <p className="text-xs right-1/2 ml-1"> °C</p>
-                    </div>
+                      </div>
+                    }
+                    { currentParam==='humidity' && 
+                      <div className="flex text-xl justify-center font-bold">
+                        {todayHighestHumidity}
+                        <p className="text-xs right-1/2 ml-1"> %</p>
+                      </div>
+                    }
+                    { currentParam==='co2' && 
+                      <div className="flex text-xl justify-center font-bold">
+                        {todayHighestCO2Level}
+                        <p className="text-xs right-1/2 ml-1"> ppm</p>
+                      </div>
+                    }
+                    { currentParam==='light-intensity' && 
+                      <div className="flex text-xl justify-center font-bold">
+                        {todayHighestLightIntensity}
+                        <p className="text-xs right-1/2 ml-1"> cd</p>
+                      </div>
+                    }
                     <p className='text-xs'>Today-highest </p>
                 </div>
                 <div className='text-center'>
-                    <div className="flex text-xl justify-center font-bold">
-                        29.3
+                    { currentParam==='temperature' && 
+                      <div className="flex text-xl justify-center font-bold">
+                        {todayLowestTemp}
                         <p className="text-xs right-1/2 ml-1"> °C</p>
-                    </div>
+                      </div>
+                    }
+                    { currentParam==='humidity' && 
+                      <div className="flex text-xl justify-center font-bold">
+                        {todayLowestHumidity}
+                        <p className="text-xs right-1/2 ml-1"> %</p>
+                      </div>
+                    }
+                    { currentParam==='co2' && 
+                      <div className="flex text-xl justify-center font-bold">
+                        {todayLowestCO2Level}
+                        <p className="text-xs right-1/2 ml-1"> ppm</p>
+                      </div>
+                    }
+                    { currentParam==='light-intensity' && 
+                      <div className="flex text-xl justify-center font-bold">
+                        {todayLowestLightIntensity}
+                        <p className="text-xs right-1/2 ml-1"> cd</p>
+                      </div>
+                    }
                     <p className='text-xs'>Today-lowest</p>
                 </div>
             </div>

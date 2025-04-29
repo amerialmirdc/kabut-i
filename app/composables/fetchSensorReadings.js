@@ -33,7 +33,8 @@ const getDashboardChartData = async (dateFrom, dateTo, sort, offset) => {
     
     console.log(localStorage.getItem('token'))
 
-    await axios.get(`${server_url}/kabuti-readings?filters[createdAt][$gte]=${displayDateOnly(dateFrom)}T00:00:00Z&filters[createdAt][$lte]=${displayDateOnly(moment(dateTo).add(1,'d'))}T00:00:00Z&sort[0]=createdAt%3A${sort}&pagination[start]=${offset}&pagination[limit]=21`).then(res=>{
+    await axios.get(`${server_url}/kabuti-readings?filters[createdAt][$gte]=${displayDateOnly(dateFrom)}&filters[createdAt][$lte]=${displayDateOnly(moment(dateTo).add(1,'d'))}&sort[0]=createdAt%3A${sort}&pagination[start]=${offset}&pagination[limit]=21`).then(res=>{
+    // await axios.get(`${server_url}/kabuti-readings?filters[createdAt][$gte]=${displayDateOnly(dateFrom)}T00:00:00Z&filters[createdAt][$lte]=${displayDateOnly(moment(dateTo).add(1,'d'))}T00:00:00Z&sort[0]=createdAt%3A${sort}&pagination[start]=${offset}&pagination[limit]=21`).then(res=>{
         console.log('response:', res)
         data = res?.data.data
         meta = res?.data.meta

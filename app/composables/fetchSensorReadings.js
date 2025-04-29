@@ -52,7 +52,7 @@ const getTodayHighLowReadings = async (dateFrom, dateTo) => {
     console.log('LH date:', displayDateOnly(dateFrom))
     console.log('LH date:', displayDateOnly(moment(dateTo).add(1,'d')))
 
-    await axios.get(`${server_url}/kabuti-readings?filters[createdAt][$gte]=${displayDateOnly(dateFrom)}T00:00:00Z&filters[createdAt][$lte]=${displayDateOnly(moment(dateTo).add(1,'d'))}T00:00:00Z`).then(res=>{
+    await axios.get(`${server_url}/kabuti-readings?filters[createdAt][$gte]=${displayDateOnly(dateFrom)}&filters[createdAt][$lte]=${displayDateOnly(moment(dateTo).add(1,'d'))}&pagination[limit]=2000`).then(res=>{
         console.log('high:low: ', res)
         data2 = res?.data.data
     }).catch(err=>{

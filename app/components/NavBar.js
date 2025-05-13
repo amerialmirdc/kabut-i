@@ -62,7 +62,16 @@ export default function NavBar() {
         {
           !isMobile && 
           <div>
-            <div className="bg-sky-500 w-16 fixed z-10 bottom-0 left-0 top-0"></div>
+            <div className="bg-sky-500 w-16 fixed z-10 bottom-0 left-0 top-0 flex flex-col justify-center">
+              <div onClick={()=>{routeTo('fogger')}} className="text-center py-4 flex items-center flex-col justify-center text-white cursor-pointer">
+                <WaterDamageIcon className="" style={{fontSize: '32px'}}></WaterDamageIcon>
+                <p className="text-sm">Fogger</p>
+              </div>
+              <div onClick={()=>{routeTo('sprinkler')}} className="text-center py-4 flex items-center flex-col justify-center text-white cursor-pointer">
+                <WaterDamageIcon style={{fontSize: '32px'}}></WaterDamageIcon>
+                <p className="text-sm">Sprinkler</p>
+              </div>
+            </div>
           </div>
         }
       </>

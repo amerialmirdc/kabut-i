@@ -69,8 +69,14 @@ let Dashboard = () => {
   const [weather, setWeather] = useState({})
   const [sensorReadings, setSensorReadings] = useState([])
   const [startDate, setStartDate] = useState(new Date());
+  const [endDate, setEndDate] = useState(new Date());
   const [selectedParam, setSelectedParam] = useState({ temp: false, hum: false, light: false, co2: false })
   const [showChart, setShowChart] = useState(false);
+  const [tableData, setTableData] = useState([])
+  const [_sort, setSort] = useState('desc')
+  const [page, setPage] = useState(1)
+  const [paginationCount, setPaginationCount] = useState(1)
+  const [limit, setLimit] = useState(21)
 
   const router = useRouter()
   const params = useParams()
@@ -157,20 +163,26 @@ let Dashboard = () => {
     setSensorReadings(readings[0])
   }
 
-  const fetchChartReadings = async () => {
+  const fetchChartReadings = async (datefrom, dateto, sort, _offset) => {
     let formattedFogTemp = [];
     let formattedFogHumidity = [];
     let formattedFogLightIntensity = [];
     let formattedFogCO2Level = [];
 
-    const {data} = await getDashboardChartData(new Date(), new Date(), 'desc', 0)
+    const {data, meta} = await getDashboardChartData(datefrom, dateto, sort, _offset)
+    console.log('Start date', startDate)
+    console.log('End date', endDate)
     console.log('chart data', data)
+
+    setPaginationCount(Math.ceil(meta?.pagination.total/limit))
+
     data.forEach(i=>{
       formattedFogTemp.push(i?.attributes.spr_temperature)
       formattedFogHumidity.push(i?.attributes.spr_humidity)
       formattedFogLightIntensity.push(i?.attributes.spr_light_intensity)
       formattedFogCO2Level.push(i?.attributes.spr_co2)
     })
+    setTableData(data)
     setChartFogTemp({
       labels,
       datasets: [
@@ -220,8 +232,7 @@ let Dashboard = () => {
 
   useEffect( ()=>{
     fetchSensorReadings()
-    fetchChartReadings()
-    // console.log(getCurrentReadings())
+    fetchChartReadings(startDate, endDate, _sort, 0)
     // console.log(token)
     // console.log(moment().hours() - moment(JSON.parse(localStorage.getItem('weather'))?.date_time).hours())
     if(localStorage.getItem('weather')){
@@ -450,18 +461,31 @@ let Dashboard = () => {
     }
   }
 
-  const sort = (val) => {
-    console.log('sort', val)
+  const sort = async (sort) => {
+    setSort(sort)
+    await fetchChartReadings(startDate, endDate, sort, (page*limit)-limit)
   }
 
-  const setDateFrom = (date) => {
+  const setDateFrom = async (date) => {
     setStartDate(date)
     console.log('set date from', date)
+
+    console.log('DATE FROM:', startDate)
+    await fetchChartReadings(date, endDate, _sort, (page*limit)-limit)
   }
 
-  const setDateTo = (date) => {
-    setStartDate(date)
+  const setDateTo = async (date) => {
+    setEndDate(date)
     console.log('set date to', date)
+
+    console.log('DATE TO:', endDate)
+    await fetchChartReadings(startDate, date, _sort, (page*limit)-limit)
+  }
+
+  const handleSetPage = async (_page) => {
+    setPage(_page)
+    console.log(_page)
+    await fetchChartReadings(startDate, endDate, _sort, (_page*limit)-limit)
   }
 
   return (
@@ -513,7 +537,7 @@ let Dashboard = () => {
               <div className="border-slate-400 border rounded flex relative h-full">
                 <div className={`flex flex-col justify-center align-middle w-1/2 text-center hover:border-sky-400 hover:border-4 cursor-pointer ${selectedParam.temp ? 'border-sky-400 border-4':''}`} onClick={()=>handleClick('temp')}>
                   <div className="flex text-5xl justify-center relative left-3">
-                    {sensorReadings?.attributes?.fog_temperature}
+                    {sensorReadings?.attributes?.spr_temperature}
                     <p className="text-xl right-1/2 ml-1">°C</p>
                   </div>
                   <p>Temperature</p>
@@ -523,7 +547,7 @@ let Dashboard = () => {
                 </div>
                 <div className={`flex flex-col justify-center align-middle w-1/2 text-center hover:border-sky-400 hover:border-4 cursor-pointer ${selectedParam.hum ? 'border-sky-400 border-4':''}`} onClick={()=>handleClick('hum')}>
                   <div className="flex text-5xl justify-center relative left-3">
-                    {sensorReadings?.attributes?.fog_humidity}
+                    {sensorReadings?.attributes?.spr_humidity}
                     <p className="text-xl right-1/2 ml-1"> %</p>
                   </div>
                   <p>Humidity</p>
@@ -541,7 +565,7 @@ let Dashboard = () => {
               <div className="border-slate-400 border rounded flex relative h-full">
                 <div className={`flex flex-col justify-center align-middle w-1/2 text-center hover:border-sky-400 hover:border-4 cursor-pointer ${selectedParam.light ? 'border-sky-400 border-4':''}`} onClick={()=>handleClick('light')}>
                   <div className="flex text-5xl justify-center relative left-3">
-                    {sensorReadings?.attributes?.fog_light_intensity}
+                    {sensorReadings?.attributes?.spr_light_intensity}
                     <p className="text-lg right-1/2 ml-1">cd</p>
                   </div>
                   <p>Light Intensity</p>
@@ -551,7 +575,7 @@ let Dashboard = () => {
                 </div>
                 <div className={`flex flex-col justify-center align-middle w-1/2 text-center hover:border-sky-400 hover:border-4 cursor-pointer ${selectedParam.co2 ? 'border-sky-400 border-4':''}`} onClick={()=>handleClick('co2')}>
                   <div className="flex text-4xl justify-center relative left-3">
-                    {sensorReadings?.attributes?.fog_co2}
+                    {sensorReadings?.attributes?.spr_co2}
                     <p className="text-lg right-1/2 ml-1"> ppm</p>
                   </div>
                   <p>CO2 Level</p>
@@ -613,7 +637,7 @@ let Dashboard = () => {
                   <label className='mr-2 ml-3'>From:</label>
                   <DatePicker className='border-slate-300 border rounded w-32 h-9 pl-2' selected={startDate} onChange={(date) => setDateFrom(date)}/>
                   <label className='ml-3 mr-2'>To:</label>
-                  <DatePicker className='border-slate-300 border rounded w-32 h-9 pl-2' selected={startDate} onChange={(date) => setDateTo(date)}/>
+                  <DatePicker className='border-slate-300 border rounded w-32 h-9 pl-2' selected={endDate} onChange={(date) => setDateTo(date)}/>
                   <FilterAltIcon className='ml-1' style={{fontSize: '36px', color: 'rgb(14 165 233)'}}></FilterAltIcon>
                 </div>
               </div>
@@ -659,13 +683,13 @@ let Dashboard = () => {
                     { !showChart &&
                       <TableBody>
                         {
-                          arr.map((i)=>(
-                            <StyledTableRow key={i}>
-                              <StyledTableCell component="th" scope="row">30.1 °C</StyledTableCell>
-                              <StyledTableCell component="th" scope="row">80 %</StyledTableCell>
-                              <StyledTableCell component="th" scope="row">200 ppm</StyledTableCell>
-                              <StyledTableCell component="th" scope="row">255 cd</StyledTableCell>
-                              <StyledTableCell >Feb 25, 2025</StyledTableCell>
+                          tableData.map((i)=>(
+                            <StyledTableRow key={i?.id}>
+                              <StyledTableCell component="th" scope="row">{i?.attributes.spr_temperature} °C</StyledTableCell>
+                              <StyledTableCell component="th" scope="row">{i?.attributes.spr_humidity} %</StyledTableCell>
+                              <StyledTableCell component="th" scope="row">{i?.attributes.spr_co2} ppm</StyledTableCell>
+                              <StyledTableCell component="th" scope="row">{i?.attributes.spr_light_intensity} cd</StyledTableCell>
+                              <StyledTableCell >{moment(i?.attributes.createdAt).format('LTS')} - {moment(i?.attributes.createdAt).format('LL')}</StyledTableCell>
                             </StyledTableRow>
                           ))
                         }
@@ -679,7 +703,7 @@ let Dashboard = () => {
             <div style={{height: 'calc(6% + 1rem)', paddingTop: '1rem'}} className="">
               <div className="border-slate-400 border rounded h-full flex justify-center items-center" >
                 <Stack spacing={3}>
-                  <Pagination  count={11} defaultPage={6} variant="outlined" shape="rounded" />
+                  <Pagination onChange={(e, page)=>handleSetPage(page)}  count={paginationCount} page={page} variant="outlined" shape="rounded" />
                 </Stack>
               </div>
             </div>

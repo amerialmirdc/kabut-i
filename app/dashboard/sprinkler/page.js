@@ -494,35 +494,36 @@ let Dashboard = () => {
       {
         !isMobile &&
         <div className="h-screen w-screen flex justify-center items-center pl-32 pr-16 py-12">
+          <p className="fixed z-10 top-2 text-lg text-gray-500">Tent 2 - Sprinkler</p>
           {/* Dashboard left side */}
           <div className="h-full w-1/3 pr-4">
             <div className="h-1/3 pb-2">
               <div className="border-slate-400 border rounded p-4 relative h-full">
-                <p className="absolute">Ilocos Sur, San Juan</p>
+                <p className="absolute top-1 left-2 uppercase" style={{fontSize: '11px'}}>Ilocos Sur, San Juan</p>
                 <div className="flex flex-col h-full justify-center">
                   <div className="text-center mb-3">
-                    <div className="flex text-4xl justify-center">
+                    <div className="flex text-2xl justify-center">
                       {moment(weather?.date_time).format('LT')}
                     </div>
                     <p>{moment(weather?.date_time).format('ll')}</p>
                   </div>
                   <div className="flex justify-center mt-3">
                     <div>
-                      <div className="flex text-4xl justify-center">
+                      <div className="flex text-2xl justify-center">
                         {weather?.temp_in_c}
                         <p className="text-lg right-1/2 ml-1"> °C</p>
                       </div>
                       <p>{weather?.condition?.text}</p>
                     </div>
                     <div className="mx-10">
-                      <div className="flex text-5xl justify-center relative left-2">
+                      <div className="flex text-2xl justify-center relative left-2">
                         {weather.humidity}
                         <p className="text-xl right-1/2 ml-1"> %</p>
                       </div>
                       <p>Humidity</p>
                     </div>
                     <div>
-                      <div className="flex text-5xl justify-center relative left-2">
+                      <div className="flex text-2xl justify-center relative left-2">
                         {weather.precip}
                         <p className="text-xl right-1/2 ml-1"> °C</p>
                       </div>
@@ -653,7 +654,7 @@ let Dashboard = () => {
                   {/* <Line width={"100"} height={"100"} options={options2} data={tempData} /> */}
                 </div>
               }
-              <div className="border-slate-400 border rounded " >
+              <div className="border-slate-400 border rounded mt-4" >
               <TableContainer component={Paper} sx={{  }}>
                 <Table sx={{  }}>
                     <TableHead>
@@ -717,7 +718,7 @@ let Dashboard = () => {
         <div>
           <div className="h-screen p-4 pb-16 flex flex-col justify-center">
             <div className="border-slate-400 border h-1/3 mb-4 rounded p-4 relative">
-              <p className="absolute">Ilocos Sur, San Juan</p>
+            <p className="absolute top-1 left-2 uppercase" style={{fontSize: '12px'}}>Ilocos Sur, San Juan</p>
               <div className="flex flex-col h-full justify-center">
                 <div className="text-center">
                   <div className="flex text-4xl justify-center">

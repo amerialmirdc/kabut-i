@@ -8,9 +8,18 @@ export default function NavBar() {
 
   const [isMobile, setIsMobile] = useState(false)
   const router = useRouter()
+  const [activeTab, setActiveTab] = useState('fogger')
   let defaultMobileWidth = 450;
 
   useEffect(() => {
+    if(window.location.href.includes('fogger')){
+      setActiveTab('fogger')
+      console.log('foggerrrr')
+    }else{
+      setActiveTab('sprinkler')
+      console.log('sprinklerrr')
+    }
+
     if(window.screen.width <= defaultMobileWidth){
       setIsMobile(true)
     }else{
@@ -44,11 +53,11 @@ export default function NavBar() {
           isMobile && 
           <div>
             <div className="bg-sky-500 h-16 fixed z-10 bottom-0 left-0 right-0 flex items-center justify-evenly">
-              <div onClick={()=>{routeTo('fogger')}} className="text-center px-2 h-full flex items-center flex-col justify-center text-white">
+              <div onClick={()=>{routeTo('fogger')}} className={` text-center px-4 h-full flex items-center flex-col justify-center  ${activeTab==='fogger'?'bg-white text-sky-500':'text-white'}`}>
                 <WaterDamageIcon className="" style={{fontSize: '32px'}}></WaterDamageIcon>
                 <p className="text-sm">fogger</p>
               </div>
-              <div onClick={()=>{routeTo('sprinkler')}} className="text-center px-2 h-full flex items-center flex-col justify-center text-white">
+              <div onClick={()=>{routeTo('sprinkler')}} className={` text-center px-4 h-full flex items-center flex-col justify-center  ${activeTab==='sprinkler'?'bg-white text-sky-500':'text-white'}`}>
                 <WaterDamageIcon style={{fontSize: '32px'}}></WaterDamageIcon>
                 <p className="text-sm">sprinkler</p>
               </div>
@@ -63,11 +72,11 @@ export default function NavBar() {
           !isMobile && 
           <div>
             <div className="bg-sky-500 w-16 fixed z-10 bottom-0 left-0 top-0 flex flex-col justify-center">
-              <div onClick={()=>{routeTo('fogger')}} className="text-center py-4 flex items-center flex-col justify-center text-white cursor-pointer">
+              <div onClick={()=>{routeTo('fogger')}} className={`text-center py-4 flex items-center flex-col justify-center text-white cursor-pointer ${activeTab==='fogger'?'bg-white text-sky-500':'text-white'}`}>
                 <WaterDamageIcon className="" style={{fontSize: '32px'}}></WaterDamageIcon>
                 <p className="text-sm">Fogger</p>
               </div>
-              <div onClick={()=>{routeTo('sprinkler')}} className="text-center py-4 flex items-center flex-col justify-center text-white cursor-pointer">
+              <div onClick={()=>{routeTo('sprinkler')}} className={`text-center py-4 flex items-center flex-col justify-center text-white cursor-pointer ${activeTab==='sprinkler'?'bg-white text-sky-500':'text-white'}`}>
                 <WaterDamageIcon style={{fontSize: '32px'}}></WaterDamageIcon>
                 <p className="text-sm">Sprinkler</p>
               </div>

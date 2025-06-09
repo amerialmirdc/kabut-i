@@ -183,6 +183,13 @@ let Dashboard = () => {
       formattedFogCO2Level.push(i?.attributes.spr_co2)
     })
     setTableData(data)
+
+    formattedFogTemp.reverse()
+    formattedFogHumidity.reverse()
+    formattedFogLightIntensity.reverse()
+    formattedFogCO2Level.reverse()
+
+
     setChartFogTemp({
       labels,
       datasets: [

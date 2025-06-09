@@ -184,6 +184,14 @@ let Dashboard = () => {
       formattedFogLightIntensity.push(i?.attributes.fog_light_intensity)
       formattedFogCO2Level.push(i?.attributes.fog_co2)
     })
+
+    // reverse the array to fix the chart
+    formattedFogTemp.reverse()
+    formattedFogHumidity.reverse()
+    formattedFogLightIntensity.reverse()
+    formattedFogCO2Level.reverse()
+
+
     setTableData(data)
     setChartFogTemp({
       labels,

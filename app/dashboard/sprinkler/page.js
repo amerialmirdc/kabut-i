@@ -77,6 +77,11 @@ let Dashboard = () => {
   const [page, setPage] = useState(1)
   const [paginationCount, setPaginationCount] = useState(1)
   const [limit, setLimit] = useState(21)
+  const [chart2Data, setChart2Data] = useState([])
+  const [formattedFogCO2Level_, setFormattedFogCO2Level_] = useState([])
+  const [formattedFogHumLevel_, setFormattedFogHumLevel_] = useState([])
+  const [formattedFogTempLevel_, setFormattedFogTempLevel_] = useState([])
+  const [formattedFogLightLevel_, setFormattedFogLightLevel_] = useState([])
 
   const router = useRouter()
   const params = useParams()
@@ -188,6 +193,11 @@ let Dashboard = () => {
     formattedFogHumidity.reverse()
     formattedFogLightIntensity.reverse()
     formattedFogCO2Level.reverse()
+
+    setFormattedFogCO2Level_(formattedFogCO2Level)
+    setFormattedFogHumLevel_(formattedFogHumidity)
+    setFormattedFogTempLevel_(formattedFogTemp)
+    setFormattedFogLightLevel_(formattedFogLightIntensity)
 
 
     setChartFogTemp({
@@ -386,6 +396,14 @@ let Dashboard = () => {
 
 
   const handleClick = (val) => {
+    console.log('Table Data',  tableData)
+    let chartLabel = []
+    tableData.forEach(i=>{
+      chartLabel.push(moment(i?.attributes.createdAt).format('LTS'))
+    })
+
+    chartLabel.reverse()
+
     switch(val){
       case 'temp': console.log('temperature')
         if(selectedParam.temp) {
@@ -403,6 +421,17 @@ let Dashboard = () => {
           hum: false,
           light: false,
           co2: false
+        })
+        setChart2Data({
+          labels: chartLabel,
+          datasets: [
+            {
+              label: 'Dataset 1',
+              data: formattedFogTempLevel_,
+              borderColor: '#49ABDF',
+              lineTension: 0.4
+            }
+          ],
         })
         setShowChart(true)
         break;
@@ -423,6 +452,17 @@ let Dashboard = () => {
           light: false,
           co2: false
         })
+        setChart2Data({
+          labels: chartLabel,
+          datasets: [
+            {
+              label: 'Dataset 1',
+              data: formattedFogHumLevel_,
+              borderColor: '#49ABDF',
+              lineTension: 0.4
+            }
+          ],
+        })
         setShowChart(true)
         break;
       case 'light': console.log('light intensity')
@@ -442,6 +482,17 @@ let Dashboard = () => {
           light: true,
           co2: false
         })
+        setChart2Data({
+          labels: chartLabel,
+          datasets: [
+            {
+              label: 'Dataset 1',
+              data: formattedFogLightLevel_,
+              borderColor: '#49ABDF',
+              lineTension: 0.4
+            }
+          ],
+        })
         setShowChart(true)
         break; 
       case 'co2': console.log('co2 level')
@@ -460,6 +511,18 @@ let Dashboard = () => {
           hum: false,
           light: false,
           co2: true
+        })
+        setChart2Data({
+          labels: chartLabel,
+          // labels,
+          datasets: [
+            {
+              label: 'Dataset 1',
+              data: formattedFogCO2Level_,
+              borderColor: '#49ABDF',
+              lineTension: 0.4
+            }
+          ],
         })
         setShowChart(true)
         break;
@@ -657,7 +720,7 @@ let Dashboard = () => {
               {/* insert line chart here... */}
               { showChart &&
                 <div className="border-slate-400 border rounded mb-3 p-2 flex justify-center" style={{width: '100%', height: '320px'}}>
-                  <Line  options={options2} data={tempData} />
+                  <Line  options={options2} data={chart2Data} />
                   {/* <Line width={"100"} height={"100"} options={options2} data={tempData} /> */}
                 </div>
               }
@@ -676,13 +739,13 @@ let Dashboard = () => {
                     { showChart &&
                       <TableBody>
                         {
-                          arr2.map((i)=>(
-                            <StyledTableRow key={i}>
-                              <StyledTableCell component="th" scope="row">30.1 °C</StyledTableCell>
-                              <StyledTableCell component="th" scope="row">80 %</StyledTableCell>
-                              <StyledTableCell component="th" scope="row">200 ppm</StyledTableCell>
-                              <StyledTableCell component="th" scope="row">255 cd</StyledTableCell>
-                              <StyledTableCell >Feb 25, 2025</StyledTableCell>
+                          tableData.map((i)=>(
+                            <StyledTableRow key={i?.id}>
+                              <StyledTableCell component="th" scope="row">{i?.attributes.spr_temperature} °C</StyledTableCell>
+                              <StyledTableCell component="th" scope="row">{i?.attributes.spr_humidity} %</StyledTableCell>
+                              <StyledTableCell component="th" scope="row">{i?.attributes.spr_co2} ppm</StyledTableCell>
+                              <StyledTableCell component="th" scope="row">{i?.attributes.spr_light_intensity} cd</StyledTableCell>
+                              <StyledTableCell >{moment(i?.attributes.createdAt).format('LTS')} - {moment(i?.attributes.createdAt).format('LL')}</StyledTableCell>
                             </StyledTableRow>
                           ))
                         }

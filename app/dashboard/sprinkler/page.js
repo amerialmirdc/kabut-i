@@ -752,7 +752,6 @@ let Dashboard = () => {
                   <DatePicker className='border-slate-300 border rounded w-32 h-9 pl-2' selected={startDate} onChange={(date) => setDateFrom(date)}/>
                   <label className='ml-3 mr-2'>To:</label>
                   <DatePicker className='border-slate-300 border rounded w-32 h-9 pl-2' selected={endDate} onChange={(date) => setDateTo(date)}/>
-                  <FilterAltIcon className='ml-1' style={{fontSize: '36px', color: 'rgb(14 165 233)'}}></FilterAltIcon>
                 </div>
               </div>
             </div>

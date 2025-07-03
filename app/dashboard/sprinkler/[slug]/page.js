@@ -29,6 +29,9 @@ import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
 import { useParams } from 'next/navigation'
 import {getCurrentReadings, getDashboardChartData, getTodayHighLowReadings} from '@/app/composables/fetchSensorReadings'
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+import axios from 'axios'
 
 ChartJS.register(
   CategoryScale,
@@ -372,6 +375,45 @@ export default function Temperature() {
     await fetchChartReadings(dateFrom, dateTo, _sort, (_page*21)-21)
   }
 
+  const downloadPDF = () => {
+    const config = {
+      headers: {
+          "Authorization": "Bearer "
+      }
+    }
+    const fetchData = async () => {
+      try { 
+        const {data: response} = await axios.get(`https://i-pond-backend.ap.ngrok.io/api/kabuti-readings?filters[createdAt][$gte]=${moment(dateFrom).format('YYYY-MM-DD')}&filters[createdAt][$lt]=${moment(dateTo).format('YYYY-MM-DD')}&sort[0]=createdAt:asc&pagination[start]=0&pagination[limit]=30000`, config);
+        console.log('response', response)
+        const doc = new jsPDF();
+        const body = [];
+        response.data?.forEach((i) => {
+          body.push([
+            `${i.attributes.spr_temperature} ºC`,
+            `${i.attributes.spr_humidity} %`,
+            `${i.attributes.spr_co2} ppm`,
+            `${i.attributes.spr_light_intensity} cd`,
+            moment(`${i?.attributes?.createdAt}`).format('LTS'),
+            moment(`${i?.attributes?.createdAt}`).format('l'),
+          ]);
+        });
+
+        doc.text("Tent 1 - Sprinkler", 14, 10);
+        // doc.text("Tent 1 - Fogger", 14, 30);
+        autoTable(doc, {
+          head: [["Temperature", "Humidity", "CO2", "Light Intensity", "Time", "Date"]],
+          body: body,
+        });
+
+        doc.save("Kabut-i.pdf");
+
+      } catch (error) {
+        console.error(error.message);
+      }
+    }
+    fetchData();
+  }
+
   return (
     <div className='p-4'>
         <div className="border-slate-400 border h-1/3 mb-3 rounded p-4 relative flex">
@@ -479,7 +521,7 @@ export default function Temperature() {
             </div>
         </div>
         <div className="border-slate-400 border h-1/3 mb-3 rounded p-2 relative flex justify-between">
-            <FileDownloadIcon className='border-slate-300 border rounded'></FileDownloadIcon>
+            <FileDownloadIcon onClick={downloadPDF} className='border-slate-300 border rounded'></FileDownloadIcon>
             <select value={_sort} onChange={(e) => handleSetSort(e.target.value) } name="sort" id="sort" className='border-slate-300 border rounded' style={{width: '15%'}}>
                 <option value="asc">asc</option>
                 <option value="desc">desc</option>

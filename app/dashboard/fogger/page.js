@@ -20,6 +20,8 @@ import Paper from '@mui/material/Paper';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import "react-datepicker/dist/react-datepicker.css";
 import DatePicker from "react-datepicker";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
 import {
   Chart as ChartJS,
@@ -561,6 +563,47 @@ let Dashboard = () => {
     await fetchChartReadings(startDate, endDate, _sort, (_page*limit)-limit)
   }
 
+  const downloadPDF = () => {
+    const config = {
+      headers: {
+          "Authorization": "Bearer "
+      }
+    }
+    const fetchData = async () => {
+      try { 
+        const {data: response} = await axios.get(`https://i-pond-backend.ap.ngrok.io/api/kabuti-readings?filters[createdAt][$gte]=${moment(startDate).format('YYYY-MM-DD')}&filters[createdAt][$lt]=${moment(endDate).format('YYYY-MM-DD')}&sort[0]=createdAt:asc&pagination[start]=0&pagination[limit]=30000`, config);
+        console.log('response', response)
+        console.log('Start Date', moment(startDate).format())
+        console.log('End Date', moment(endDate).format())
+        const doc = new jsPDF();
+        const body = [];
+        response.data?.forEach((i) => {
+          body.push([
+            `${i.attributes.fog_temperature} ºC`,
+            `${i.attributes.fog_humidity} %`,
+            `${i.attributes.fog_co2} ppm`,
+            `${i.attributes.fog_light_intensity} cd`,
+            moment(`${i?.attributes?.createdAt}`).format('LTS'),
+            moment(`${i?.attributes?.createdAt}`).format('l'),
+          ]);
+        });
+
+        doc.text("Tent 1 - Fogger", 14, 10);
+        // doc.text("Tent 1 - Fogger", 14, 30);
+        autoTable(doc, {
+          head: [["Temperature", "Humidity", "CO2", "Light Intensity", "Time", "Date"]],
+          body: body,
+        });
+
+        doc.save("Kabut-i.pdf");
+
+      } catch (error) {
+        console.error(error.message);
+      }
+    }
+    fetchData();
+  }
+
   return (
     <div className="text-gray-600">
       {/* for desktop */}
@@ -699,7 +742,7 @@ let Dashboard = () => {
               </div> */}
               <div className="border-slate-400 border mb-3 rounded p-2 px-4 relative flex justify-between items-center">
                 <div className="flex items-center">
-                  <FileDownloadIcon className='border-slate-300 border rounded p-1 text-sky-400 hover:text-white cursor-pointer hover:bg-sky-500' style={{fontSize: '36px', }}></FileDownloadIcon>
+                  <FileDownloadIcon onClick={downloadPDF} className='border-slate-300 border rounded p-1 text-sky-400 hover:text-white cursor-pointer hover:bg-sky-500' style={{fontSize: '36px', }}></FileDownloadIcon>
                   <label className='ml-3' style={{position: 'relative', top: '1px'}}>Download</label>
                 </div>
                 <div className=''>
